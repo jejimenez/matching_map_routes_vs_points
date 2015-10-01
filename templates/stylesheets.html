@@ -1,0 +1,10 @@
+{% load compress %}
+{% load staticfiles %}
+
+{% compress css %}
+<link rel="stylesheet" type="text/css" href="{% static 'bower_components/semantic-ui/dist/semantic.css' %}" />
+
+<link rel="stylesheet" type="text/css" href="{% static 'bower_components/toastr/toastr.css' %}" />
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/pooling.css' %}" />
+{% endcompress %}

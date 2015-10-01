@@ -1,0 +1,78 @@
+-------requirements:
+
+---django-libraries
+#pip install django-tastypie
+pip install django-compressor --django-compressor==1.4
+pip install djangorestframework
+pip install djangorestframework-gis
+
+
+
+
+--Installing Geospatial libraries  : https://docs.djangoproject.com/en/1.8/ref/contrib/gis/install/geolibs/#geosbuild
+
+sudo apt-get install binutils libproj-dev gdal-bin
+GEOS
+$ wget http://download.osgeo.org/geos/geos-3.3.8.tar.bz2
+$ tar xjf geos-3.3.8.tar.bz2
+$ cd geos-3.3.8
+$ ./configure
+$ make
+$ sudo make install
+$ cd ..
+
+PROJ4
+$ wget http://download.osgeo.org/proj/proj-4.8.0.tar.gz
+$ wget http://download.osgeo.org/proj/proj-datumgrid-1.5.tar.gz
+$ tar xzf proj-4.8.0.tar.gz
+$ cd proj-4.8.0/nad
+$ tar xzf ../../proj-datumgrid-1.5.tar.gz
+$ cd ..
+$ ./configure
+$ make
+$ sudo make install
+$ cd ..
+
+GDAL
+
+$ wget http://download.osgeo.org/gdal/gdal-1.9.2.tar.gz
+$ tar xzf gdal-1.9.2.tar.gz
+$ cd gdal-1.9.2
+$ ./configure
+$ make # Go get some coffee, this takes a while.
+$ sudo make install
+$ cd ..
+
+LIBXML2
+
+  wget ftp://xmlsoft.org/libxml2/libxml2-2.9.1.tar.gz
+  tar xzf libxml2-2.9.1.tar.gz 
+  cd libxml2-2.9.1/
+  ./configure 
+  make
+  sudo make install
+
+POSTGRESS HEADERS
+sudo apt-get install postgresql-server-dev-9.3
+
+
+
+POSTGIS
+$ wget http://download.osgeo.org/postgis/source/postgis-2.1.5.tar.gz
+$ tar xzf postgis-2.1.5.tar.gz
+$ cd postgis-2.1.5
+$ ./configure
+$ make
+$ sudo make install
+$ cd ..
+
+
+POSTGRES CREATE EXTENSIONS
+
+$ psql -d pooling
+# create extension postgis
+# create extension postgis_topology
+
+
+
+

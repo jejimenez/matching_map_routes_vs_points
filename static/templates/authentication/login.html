@@ -1,0 +1,35 @@
+<div class="login_form">
+  <!--<form role="form" ng-submit="vm.login()">-->
+  <div class="ui one column center aligned grid">
+    <div class="column six wide form-holder">
+      <h2 class="center aligned header form-head">Sign in</h2>
+      <form class="ui form login" ng-controller="LoginController as vm"  >
+        <div class="field">
+        <div class="ui icon input">
+          <input id="Email" type="text" ng-model="vm.login.email" placeholder="usuario (email@ejemplo.com)">
+          <i class="asterisk red icon"></i>
+        </div>
+        </div>
+        <div class="field">
+        <div class="ui icon input">
+          <input  id="Password" type="password" ng-model="vm.login.password" placeholder="contraseña">
+          <i class="asterisk red icon"></i>
+        </div>
+        </div>
+        <div class="field">
+          <button class="ui button large fluid green" ng-click="vm.login()">sign in</button>
+        </div>
+        <div class="inline field">
+          <div class="ui checkbox">
+            <input type="checkbox">
+            <label>Recordarme</label>
+          </div>
+        </div>
+
+      <div class="ui login error message"></div>
+      </form>
+    </div>
+  </div>
+  <!--</form>-->
+  
+</div>

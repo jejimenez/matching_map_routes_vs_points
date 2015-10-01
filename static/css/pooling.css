@@ -1,0 +1,108 @@
+{% load staticfiles %}
+body
+{
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+}
+h1, h2, h3, h4, h5
+{
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+}
+
+.full_content_wrap, .content_wrap, .login_form{
+    height: 100%;
+}
+
+/**login_form-->**/
+.login_form{
+  background: url('/static/img/pano_monserrate_evening_2.jpg') fixed;
+  background-size: cover;
+  padding: 0;
+  margin: 0;
+}
+.form-holder {
+    background: rgba(255,255,255,0.2);
+    margin-top: 10%;
+    border-radius: 3px;
+  }
+
+  .form-head {
+    font-size: 30px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 30px #000;
+    margin: 15px auto 30px auto;
+  }
+
+  .remember-me {
+    text-align: left;
+  }
+  .ui.checkbox label {
+    color: #ddd;
+  }
+  /**<--login_form****/
+
+#map_wrapper #btn_save_markers
+{
+  z-index: 10;
+  position: absolute;
+  top: 10px;
+  right: 50%;
+  display: block;
+}
+#map_wrapper
+{
+  position: relative;
+  top: 0px;
+  right: 0px;
+}
+
+
+/*-->navbar*/
+
+.ui.grid.main{
+  margin-top: 70px;
+}
+
+
+.mobile.row{
+  padding-top: 0px !important;
+  margin-top: 0px !important;
+}
+
+.mobile.row .ui.inverted.menu{
+  border-radius: 0px !important;
+}
+
+.padding-reset{
+  padding: 0px !important;
+}
+
+.ui.message{
+  padding: 40px !important;
+}
+
+@media (max-width: 767px) {
+  .ui.grid.main{
+      margin-top: 70px;
+  }
+  .ui.vertical.menu.navbar{
+    margin-top: 0px !important;
+  }
+}
+@media (max-device-width: 767px) {
+  .ui.grid.main{
+      margin-top: 70px;
+  }
+  .ui.vertical.menu.navbar{
+    margin-top: 0px !important;
+  }
+}
+
+.ui.vertical.menu{
+  margin-top: -15px !important;
+  width: 100%;
+  display: none;
+}
+
+/*navbar<--*/
