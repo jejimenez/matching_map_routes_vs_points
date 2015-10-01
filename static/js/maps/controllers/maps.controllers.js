@@ -36,10 +36,11 @@
     initMapUserValues();
 
     function initMapUserValues (){
-      if(Authentication.isAuthenticated()){
-        console.log("autenticado");
-      }
-        console.log("pasa");
+      if(Authentication.isAuthenticated())
+        console.log("autenticado cargar valores del usuario");
+      else
+        console.log("no autenticado no cargar valores del usuario");
+
     }
 
     /**

@@ -97,7 +97,10 @@
         $location.url('/');
       }
       function loginErrFn(data, status, headers, config) {
-        loginForm.form('add errors', [ data.message ]);
+        if(data)
+          loginForm.form('add errors', [ data.message ]);
+        else
+          loginForm.form('add errors', [ 'Error tratando de conectar con el servidor' ]);
         errorForm.show();
       }
       return;
