@@ -9,13 +9,13 @@
     .module('pooling.maps.controllers')
     .controller('GoMapsController', GoMapsController);
 
-  GoMapsController.$inject = ['$scope', '$cookies', 'GoMaps', 'Authentication'];
+  GoMapsController.$inject = ['$scope', '$cookies', '$window', 'GoMaps', 'Authentication'];
 
 
   /**
   * @namespace GoMapsController
   */
-  function GoMapsController($scope, $cookies, GoMaps, Authentication) {
+  function GoMapsController($scope, $cookies, $window, GoMaps, Authentication) {
 
     $scope.gmap = {
       //fromAddress: 'Calgary',
@@ -27,6 +27,8 @@
       zoom: 11,
     };
 
+    $scope.seekers;
+
     /**
     * @name initMapUserValues
     * @desc initialize the values previously saved by the seeker
@@ -35,9 +37,43 @@
 
     initMapUserValues();
 
+    $scope.$watch('gMap', function(map) {
+      if (map) {
+        console.log("ahora existe :)");
+      }
+      else
+        console.log("noooooooo");
+    });
+
     function initMapUserValues (){
-      if(Authentication.isAuthenticated())
-        console.log("autenticado cargar valores del usuario");
+      if(Authentication.isAuthenticated()){
+        var authenticatedAccount = Authentication.getAuthenticatedAccount();
+        var seekers;
+        GoMaps.getMarkersSeeker(authenticatedAccount.username)
+        .success(setSeekersMap);
+
+        function setSeekersMap(data, status, headers, config){
+          $scope.seekers = data;
+          console.log(data);
+          //console.log($scope.seekers);
+          //var myLatLng = {lat: data[0].end_lat, lng: data[0].end_lnt};
+
+/*
+          if ($window.google && $window.google.maps) {
+              console.log("cargadoooooooooo");
+          } else {
+              console.log("noo");
+          };*/
+          console.log($scope.gmap.markers)
+          /*  var marker = new $window.google.maps.Marker({
+              position: myLatLng,
+              map: $scope.gmap.map,
+              title: 'Hello World!'
+            });*/
+          return;
+        }
+        console.log($scope.seekers);
+      }
       else
         console.log("no autenticado no cargar valores del usuario");
 
@@ -57,8 +93,7 @@
       console.log($scope.gmap.markers);
         //create seeker object
 
-        GoMaps.setMarkersSeeker({    
-          //user : $cookies.authenticatedAccount,
+        GoMaps.setMarkersSeeker({
           start_lat : $scope.gmap.markers[0].getPosition().lat(),
           start_lng : $scope.gmap.markers[0].getPosition().lng(),
           start_point : "POINT("+$scope.gmap.markers[0].getPosition().lat()+" "+$scope.gmap.markers[0].getPosition().lng()+")",

@@ -27,7 +27,7 @@ angular.module('pooling.maps.directives', [])
         var link = function (scope, element, attrs, controller) {
             //function called in timeout
             function directive_function (scope, element, attrs, controller){
-                scope.$watch(attrs.gMap, function() {});
+                //scope.$watch(attrs.gMap, function() {});
                 var model = scope.gmap;
                 var maps_arr = [];
                 if ($window.google && $window.google.maps) {
@@ -35,6 +35,8 @@ angular.module('pooling.maps.directives', [])
                 } else {
                     maps_arr.push(injectGoogle());
                 };
+                counter++;
+                
                 function log(str){toastr["success"](str);}
                 function gMapInit() {
                    var i=0;                   
@@ -46,17 +48,28 @@ angular.module('pooling.maps.directives', [])
                             center: new google.maps.LatLng(model.Lat, model.Lon),
                             zoom: model.zoom,
                             mapTypeId: google.maps.MapTypeId.ROADMAP
-                        },
-                    markers = [];
-                    try{var map = new google.maps.Map(document.getElementById(attrs.idmap),mapOptions)}
+                        };
+                    scope.gmap.markers = [];
+                    scope.gmap.maps = [];
+                    //scope.gmap.markers = [];
+                    //scope.gmap.maps;// = [];
+                    try{scope.gmap.maps[counter] = new google.maps.Map(document.getElementById(attrs.idmap),mapOptions)}
                     catch(err){console.error(err);return false;}
                     // add your fixed business marker
-                    directionsDisplay.setMap(map);
-                    google.maps.event.addListener(map, 'click', function(event) {
+                    directionsDisplay.setMap(scope.gmap.maps[counter]);
+                    google.maps.event.addListener(scope.gmap.maps[counter], 'click', function(event) {
                        placeMarker(event.latLng);
                     });
-                    google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
+                    google.maps.event.addListenerOnce(scope.gmap.maps[counter], 'tilesloaded', function(){
                         log("Mapa cargado!");
+                        if(scope.seekers){
+                            console.log("seeeekkeers2"+scope.seekers[0].start_lat+"::"+scope.seekers[0].start_lng);
+                            placeMarker(new google.maps.LatLng(scope.seekers[0].start_lat,
+                                                             scope.seekers[0].start_lng));
+                            console.log("seeeekkeers1"+scope.seekers[0].end_lat+"::"+scope.seekers[0].end_lnt);
+                            placeMarker(new google.maps.LatLng(scope.seekers[0].end_lat,
+                                                             scope.seekers[0].end_lnt));
+                        }
                     });
 
                     // Try HTML5 geolocation
@@ -64,13 +77,16 @@ angular.module('pooling.maps.directives', [])
                         navigator.geolocation.getCurrentPosition(function (position) {
                             var pos = new google.maps.LatLng(position.coords.latitude,
                                                              position.coords.longitude);
-                            map.setCenter(pos);
+                            scope.gmap.maps[counter].setCenter(pos);
                             scope.$apply(function () {
                                 model.fromAddress = pos;
                             });
                         });
                     }
                     google.maps.event.addListener(directionsDisplay, 'directions_changed', function () {});
+
+                    /** If ther is a seeker (points) previously setted  **/
+
 
                     /**
                     * place the markers. Just two markers, start rout and end rout.
@@ -86,20 +102,20 @@ angular.module('pooling.maps.directives', [])
                         var 
                             marker = new google_maps_Marker_Seeker({
                                 position: location, 
-                                map: map,
+                                map: scope.gmap.maps[counter],
                                 animation: google.maps.Animation.DROP,
                                 draggable:true                                
                                 //icon: 'http://maps.google.com/mapfiles/kml/paddle/go.png',
                             });
                         // If it's not the first mark, must be the second. (Just two markers allowed)
-                        if(markers.length >= 1 ){
+                        if(scope.gmap.markers.length >= 1 ){
                             marker.setIcon(img_end_rt);
                             marker.setTitle(str_end_rt);
                             marker.setPlnType(strPlnTypeEnd);
                             //If there is already a second marker, it's deleted
-                            if(markers.length > 1){
-                                markers[1].setMap(null);
-                                markers.splice(1);
+                            if(scope.gmap.markers.length > 1){
+                                scope.gmap.markers[1].setMap(null);
+                                scope.gmap.markers.splice(1);
                             }
                             toastr["info"](msg_marker_added_end);
                         }//If it's the first marker
@@ -109,12 +125,13 @@ angular.module('pooling.maps.directives', [])
                             marker.setPlnType(strPlnTypeStart);
                             toastr["info"](msg_marker_added_start);
                         }
-                        markers.push(marker);
-                        scope.gmap.markers = markers;
+                        scope.gmap.markers.push(marker);
+                        //scope.gmap.markers = markers;
+                        console.log(marker);
                     }
                 };
                 function injectGoogle(callback) {
-                    var cbId = prefix + ++counter;
+                    var cbId = prefix + counter;
                     $window[cbId] = gMapInit;
                     var wf = document.createElement('script');
                     wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +

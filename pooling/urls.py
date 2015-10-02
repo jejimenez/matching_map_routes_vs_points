@@ -18,19 +18,23 @@ from django.contrib import admin
 #from tastypie.api import Api
 #from pooling.api import SeekerResource
 from django.contrib.auth.decorators import login_required 
-from pooling.views import SeekerViewSet, IndexView
+from pooling.views import SeekerViewSet, IndexView, AccountSeekerViewSet
 from pooling.serializers import SeekerSerializer
-from rest_framework import routers
+from authentication.views import AccountViewSet
+from rest_framework_nested import routers
 
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 router.register(r'seekers', SeekerViewSet)
-#v1_api = Api(api_name='v1')
-#v1_api.register(SeekerResource())
+router.register(r'accounts', AccountViewSet)
+accounts_router = routers.NestedSimpleRouter(router, r'accounts', lookup='account')
+accounts_router.register(r'seekers', AccountSeekerViewSet)
+
 
 urlpatterns = [
 #    url(r'^api/', include(v1_api.urls)),
     #url(r'^save/','pooling.views.save',name='save'),
     url(r'^api/v1/pooling/', include(router.urls)),
+    url(r'^api/v1/pooling/', include(accounts_router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url('^.*$', IndexView.as_view(), name='index'),
     #url(r'^job/$',login_required(JobView.as_view()),name='job'),

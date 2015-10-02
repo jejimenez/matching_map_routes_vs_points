@@ -72,7 +72,8 @@
     function activate() {
       // If the user is authenticated, they should not be here.
       if (Authentication.isAuthenticated()) {
-        $location.url('/');
+        //$location.url('/');
+        window.location = '/';
       }
     }
 
@@ -94,7 +95,8 @@
 
       function loginSuccessFn(data, status, headers, config) {
         Authentication.setAuthenticatedAccount(data);
-        $location.url('/');
+        //$location.url('/');
+        window.location = '/';
       }
       function loginErrFn(data, status, headers, config) {
         if(data)

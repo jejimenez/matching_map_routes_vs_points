@@ -25,6 +25,7 @@
     var markers;
     var GoMaps = {
       setMarkersSeeker: setMarkersSeeker,
+      getMarkersSeeker: getMarkersSeeker,
     };
 
     return GoMaps;
@@ -33,6 +34,11 @@
     function setMarkersSeeker(seeker) {
       //toastr["info"]("esta es la funcion de insertar los markers");
       return $http.post('/api/v1/pooling/seekers/', seeker); 
+    }
+
+    function getMarkersSeeker(username) {
+      //toastr["info"]("esta es la funcion de insertar los markers");
+      return $http.get('/api/v1/pooling/accounts/'+username+'/seekers/'); 
     }
  
   }
