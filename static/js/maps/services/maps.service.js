@@ -27,7 +27,7 @@
     var GoMapSrv = {
       setMarkersSeeker: setMarkersSeeker,
       getMarkersSeeker: getMarkersSeeker,
-      getSeekersByUser: getSeekersByUser,
+      setSeekersData: setSeekersData,
       seekers:seekers,
     };
 
@@ -44,11 +44,8 @@
       return $http.get('/api/v1/pooling/accounts/'+username+'/seekers/'); 
     }
 
-    function getSeekersByUser(username){
-      getMarkersSeeker(username).success(getSeekersSuccess);
-      function getSeekersSuccess(data, status, headers, config){
-        seekers = data;
-      }
+    function setSeekersData(data){
+      seekers = data;
     }
  
   }

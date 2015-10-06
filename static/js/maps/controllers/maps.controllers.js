@@ -21,10 +21,6 @@
     $scope.objMap = {};
     $scope.seekers;
     $scope.gmapvals = {
-      //fromAddress: 'Calgary',
-      //streetAddress: "5111 47 St NE  Calgary, AB T3J 3R2",
-      //businessWriteup: "<b>Calgary Police Service</b><br/>Calgary's Finest<br/>",
-      //businessTitle: "Calgary Police Service",
       Lon: -74.0574995,
       Lat: 4.6519047,
       zoom: 11,
@@ -42,36 +38,13 @@
     function initMapUserValues (){
       if(Authentication.isAuthenticated()){
         var authenticatedAccount = Authentication.getAuthenticatedAccount();
-        /*$scope.gmapvals = {
-          Lon: -74.0574995,
-          Lat: 4.6519047,
-          zoom: 8,
-        };*/
-
-        var seekers;
         GoMapSrv.getMarkersSeeker(authenticatedAccount.username)
         .success(setSeekersMap);
 
         function setSeekersMap(data, status, headers, config){
-          console.log('setSeekersMap');
+          //GoMapSrv.setSeekersData(data);
           $scope.initSeekers = data;
           
-          //console.log($scope.seekers);
-          //var myLatLng = {lat: data[0].end_lat, lng: data[0].end_lnt};
-/*
-          if ($window.google && $window.google.maps) {
-              console.log("cargadoooooooooo");
-          } else {
-              console.log("noo");
-          };*/
-          //console.log($scope.gmapvals.markers)
-
-          /*  var marker = new $window.google.maps.Marker({
-              position: myLatLng,
-              map: $scope.gmapvals.map,
-              title: 'Hello World!'
-            });*****
-          return;*/
         }
         //console.log($scope.GoMapSrv.seekers);
       }
@@ -116,19 +89,17 @@
     };
 
     $scope.showMessage = function (){
-      console.log('okkkkkkk2');
-      toastr['error']('::'+$('#map_canvas').length); 
-      console.log($scope.GoMapSrv.seekers);
-
-    $scope.seekers = {
-      end_lat: 4.62570408986198200000,
-      end_lnt: -74.13780212402344000000,
-      end_point: Object,
-      id: 1,
-      schedule: 1,
-      start_lat: 4.78446896657937500000,
-      start_lng: -74.06021118164062000000,
-    }
+      $scope.seekers = $scope.initSeekers[1];
+      /*
+      $scope.seekers = {
+        end_lat: 4.62570408986198200000,
+        end_lnt: -74.13780212402344000000,
+        end_point: Object,
+        id: 1,
+        schedule: 1,
+        start_lat: 4.78446896657937500000,
+        start_lng: -74.06021118164062000000,
+      }*/
 
 
     };
