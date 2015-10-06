@@ -1,5 +1,5 @@
 /**
-* GoMaps
+* GoMapSrv
 * @namespace pooling.maps.services
 */
 (function () {
@@ -7,28 +7,31 @@
 
   angular
     .module('pooling.maps.services')
-    .factory('GoMaps', GoMaps);
+    .factory('GoMapSrv', GoMapSrv);
 
-  GoMaps.$inject = ['$cookies', '$http'];
+  GoMapSrv.$inject = ['$cookies', '$http'];
 
   /**
-  * @namespace GoMaps
+  * @namespace GoMapSrv
   * @returns {Factory}
   */
-  function GoMaps($cookies, $http) {
+  function GoMapSrv($cookies, $http) {
     /**
-    * @name GoMaps
+    * @name GoMapSrv
     * @desc The Factory to be returned
     */
     var maps = {};
     var tmap;
     var markers;
-    var GoMaps = {
+    var seekers;
+    var GoMapSrv = {
       setMarkersSeeker: setMarkersSeeker,
       getMarkersSeeker: getMarkersSeeker,
+      getSeekersByUser: getSeekersByUser,
+      seekers:seekers,
     };
 
-    return GoMaps;
+    return GoMapSrv;
 
 
     function setMarkersSeeker(seeker) {
@@ -39,6 +42,13 @@
     function getMarkersSeeker(username) {
       //toastr["info"]("esta es la funcion de insertar los markers");
       return $http.get('/api/v1/pooling/accounts/'+username+'/seekers/'); 
+    }
+
+    function getSeekersByUser(username){
+      getMarkersSeeker(username).success(getSeekersSuccess);
+      function getSeekersSuccess(data, status, headers, config){
+        seekers = data;
+      }
     }
  
   }

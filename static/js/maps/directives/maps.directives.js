@@ -9,10 +9,10 @@ angular.module('pooling.maps.directives', [])
 .directive('gMap', gMapDirective);
 
 
-  gMapDirective.$inject = ['$window', '$parse', '$timeout'];
+  gMapDirective.$inject = ['$window', '$parse', '$timeout', '$interval' ];
 
 
-    function gMapDirective($window,$parse,$timeout) {
+    function gMapDirective($window,$parse,$timeout,$interval) {
         var counter = 0,
         prefix = '__ep_gmap_',
         img_start_rt = 'http://maps.google.com/mapfiles/kml/paddle/go.png',
@@ -23,19 +23,21 @@ angular.module('pooling.maps.directives', [])
         msg_marker_added_end = 'Marcador agregado:Fin de ruta',
         strPlnTypeStart = 'start',
         strPlnTypeEnd = 'end';
+
+        //googleobj = new google;
         
         var link = function (scope, element, attrs, controller) {
+            
             //function called in timeout
             function directive_function (scope, element, attrs, controller){
                 //scope.$watch(attrs.gMap, function() {});
-                var model = scope.gmap;
+                var model = scope.gmapvals;
                 var maps_arr = [];
                 if ($window.google && $window.google.maps) {
                     gMapInit();  
                 } else {
                     maps_arr.push(injectGoogle());
                 };
-                counter++;
                 
                 function log(str){toastr["success"](str);}
                 function gMapInit() {
@@ -48,27 +50,26 @@ angular.module('pooling.maps.directives', [])
                             center: new google.maps.LatLng(model.Lat, model.Lon),
                             zoom: model.zoom,
                             mapTypeId: google.maps.MapTypeId.ROADMAP
-                        };
-                    scope.gmap.markers = [];
-                    scope.gmap.maps = [];
-                    //scope.gmap.markers = [];
-                    //scope.gmap.maps;// = [];
-                    try{scope.gmap.maps[counter] = new google.maps.Map(document.getElementById(attrs.idmap),mapOptions)}
+                        };//, objMap;
+                    scope.gmapvals.markers = [];
+                    //scope.gmapvals.markers = [];
+                    //scope.gmapvals.maps;// = [];
+                    try{scope.objMap = new google.maps.Map(document.getElementById(attrs.idmap),mapOptions)}
                     catch(err){console.error(err);return false;}
                     // add your fixed business marker
-                    directionsDisplay.setMap(scope.gmap.maps[counter]);
-                    google.maps.event.addListener(scope.gmap.maps[counter], 'click', function(event) {
+                    directionsDisplay.setMap(scope.objMap);
+                    google.maps.event.addListener(scope.objMap, 'click', function(event) {
                        placeMarker(event.latLng);
                     });
-                    google.maps.event.addListenerOnce(scope.gmap.maps[counter], 'tilesloaded', function(){
+                    google.maps.event.addListenerOnce(scope.objMap, 'tilesloaded', function(){
                         log("Mapa cargado!");
-                        if(scope.seekers){
-                            console.log("seeeekkeers2"+scope.seekers[0].start_lat+"::"+scope.seekers[0].start_lng);
-                            placeMarker(new google.maps.LatLng(scope.seekers[0].start_lat,
-                                                             scope.seekers[0].start_lng));
-                            console.log("seeeekkeers1"+scope.seekers[0].end_lat+"::"+scope.seekers[0].end_lnt);
-                            placeMarker(new google.maps.LatLng(scope.seekers[0].end_lat,
-                                                             scope.seekers[0].end_lnt));
+                        if(scope.initSeekers){
+                            console.log("seeeekkeers2"+scope.initSeekers[0].start_lat+"::"+scope.initSeekers[0].start_lng);
+                            placeMarker(new google.maps.LatLng(scope.initSeekers[0].start_lat,
+                                                             scope.initSeekers[0].start_lng));
+                            console.log("seeeekkeers1"+scope.initSeekers[0].end_lat+"::"+scope.initSeekers[0].end_lnt);
+                            placeMarker(new google.maps.LatLng(scope.initSeekers[0].end_lat,
+                                                             scope.initSeekers[0].end_lnt));
                         }
                     });
 
@@ -77,7 +78,7 @@ angular.module('pooling.maps.directives', [])
                         navigator.geolocation.getCurrentPosition(function (position) {
                             var pos = new google.maps.LatLng(position.coords.latitude,
                                                              position.coords.longitude);
-                            scope.gmap.maps[counter].setCenter(pos);
+                            scope.objMap.setCenter(pos);
                             scope.$apply(function () {
                                 model.fromAddress = pos;
                             });
@@ -85,51 +86,10 @@ angular.module('pooling.maps.directives', [])
                     }
                     google.maps.event.addListener(directionsDisplay, 'directions_changed', function () {});
 
-                    /** If ther is a seeker (points) previously setted  **/
-
-
-                    /**
-                    * place the markers. Just two markers, start rout and end rout.
-                    **/
-                    function placeMarker(location) {
-                        function google_maps_Marker_Seeker(options) {
-                            google.maps.Marker.call( this, options );
-                            this.pln_type = options.pln_type;
-                        }
-                        // setting up the inheritance
-                        google_maps_Marker_Seeker.prototype = Object.create( google.maps.Marker.prototype );
-                        google_maps_Marker_Seeker.prototype.setPlnType = function (pln_type) {this.pln_type = pln_type};
-                        var 
-                            marker = new google_maps_Marker_Seeker({
-                                position: location, 
-                                map: scope.gmap.maps[counter],
-                                animation: google.maps.Animation.DROP,
-                                draggable:true                                
-                                //icon: 'http://maps.google.com/mapfiles/kml/paddle/go.png',
-                            });
-                        // If it's not the first mark, must be the second. (Just two markers allowed)
-                        if(scope.gmap.markers.length >= 1 ){
-                            marker.setIcon(img_end_rt);
-                            marker.setTitle(str_end_rt);
-                            marker.setPlnType(strPlnTypeEnd);
-                            //If there is already a second marker, it's deleted
-                            if(scope.gmap.markers.length > 1){
-                                scope.gmap.markers[1].setMap(null);
-                                scope.gmap.markers.splice(1);
-                            }
-                            toastr["info"](msg_marker_added_end);
-                        }//If it's the first marker
-                        else{
-                            marker.setTitle(str_start_rt);
-                            marker.setIcon(img_start_rt);
-                            marker.setPlnType(strPlnTypeStart);
-                            toastr["info"](msg_marker_added_start);
-                        }
-                        scope.gmap.markers.push(marker);
-                        //scope.gmap.markers = markers;
-                        console.log(marker);
-                    }
+                    counter++;
                 };
+
+                function ola(){alert('ok ok');}
                 function injectGoogle(callback) {
                     var cbId = prefix + counter;
                     $window[cbId] = gMapInit;
@@ -146,7 +106,60 @@ angular.module('pooling.maps.directives', [])
                 };
             };
 
+                                /**
+                    * place the markers. Just two markers, start rout and end rout.
+                    **/
+                    function placeMarker(location) {
+                        function google_maps_Marker_Seeker(options) {
+                            google.maps.Marker.call( this, options );
+                            this.pln_type = options.pln_type;
+                        }
+                        // setting up the inheritance
+                        google_maps_Marker_Seeker.prototype = Object.create( google.maps.Marker.prototype );
+                        google_maps_Marker_Seeker.prototype.setPlnType = function (pln_type) {this.pln_type = pln_type};
+                        var 
+                            marker = new google_maps_Marker_Seeker({
+                                position: location, 
+                                map: scope.objMap,
+                                animation: google.maps.Animation.DROP,
+                                draggable:true                                
+                                //icon: 'http://maps.google.com/mapfiles/kml/paddle/go.png',
+                            });
+                        // If it's not the first mark, must be the second. (Just two markers allowed)
+                        if(scope.gmapvals.markers.length >= 1 ){
+                            marker.setIcon(img_end_rt);
+                            marker.setTitle(str_end_rt);
+                            marker.setPlnType(strPlnTypeEnd);
+                            //If there is already a second marker, it's deleted
+                            if(scope.gmapvals.markers.length > 1){
+                                scope.gmapvals.markers[1].setMap(null);
+                                scope.gmapvals.markers.splice(1);
+                            }
+                            toastr["info"](msg_marker_added_end);
+                        }//If it's the first marker
+                        else{
+                            marker.setTitle(str_start_rt);
+                            marker.setIcon(img_start_rt);
+                            marker.setPlnType(strPlnTypeStart);
+                            toastr["info"](msg_marker_added_start);
+                        }
+                        scope.gmapvals.markers.push(marker);
+                        //scope.gmapvals.markers = markers;
+                        //console.log(marker);
+                    };
+
             $timeout(function(){directive_function (scope, element, attrs, controller)}, 0);
+
+            scope.$watch(function() { return scope.seekers; }, function(value) {
+                var i = 0;
+                if(value){
+                    console.log('in watch');
+                    console.log(value);
+                    placeMarker({lat: value.end_lat, lng: value.end_lnt});//scope.objMap
+                    //(new directive_function(scope, element, attrs, controller)).placeMarker({lat: value.end_lat, lng: value.end_lnt});//scope.objMap
+                    //}
+                }
+            });
         };
         var rtrn = {
             restrict: 'E',
