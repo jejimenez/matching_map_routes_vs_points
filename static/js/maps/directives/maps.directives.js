@@ -45,10 +45,14 @@ angular.module('pooling.maps.directives', [])
                     appooling.google_maps_Marker_Seeker = function (options) {
                         google.maps.Marker.call( this, options );
                         this.pln_type = options.pln_type;
+                        this.id_seeker = options.id_seeker;
                     }
                     // setting up the inheritance
                     appooling.google_maps_Marker_Seeker.prototype = Object.create( google.maps.Marker.prototype );
                     appooling.google_maps_Marker_Seeker.prototype.setPlnType = function (pln_type) {this.pln_type = pln_type};
+                    appooling.google_maps_Marker_Seeker.prototype.getPlnType = function () {return this.pln_type};
+                    appooling.google_maps_Marker_Seeker.prototype.setIdSeeker = function (id_seeker) {this.id_seeker = id_seeker};
+                    appooling.google_maps_Marker_Seeker.prototype.getIdSeeker = function () {return this.id_seeker};
                     //
 
                    var i=0;                   
@@ -77,9 +81,10 @@ angular.module('pooling.maps.directives', [])
                         // if initial seekers markers are setted, place it
                         if(scope.initSeekers){
                             placeMarkerOnUserClick(new google.maps.LatLng(scope.initSeekers[0].start_point.coordinates[0],
-                                                             scope.initSeekers[0].start_point.coordinates[1]));
+                                                             scope.initSeekers[0].start_point.coordinates[1]), scope.initSeekers[0].id);
                             placeMarkerOnUserClick(new google.maps.LatLng(scope.initSeekers[0].end_point.coordinates[0],
-                                                             scope.initSeekers[0].end_point.coordinates[1]));
+                                                             scope.initSeekers[0].end_point.coordinates[1]), scope.initSeekers[0].id);
+                            console.log(scope.gmapvals.markers);
                         }
                     });
 
@@ -126,15 +131,16 @@ angular.module('pooling.maps.directives', [])
             /**
             * place the markers. Just two markers, start rout and end rout.
             **/
-            function placeMarkerOnUserClick(location) {
+            function placeMarkerOnUserClick(location, seeker_id) {
                 var 
                     marker = new appooling.google_maps_Marker_Seeker({
                         position: location, 
                         map: scope.objMap,
                         animation: google.maps.Animation.DROP,
-                        draggable:true                                
+                        draggable:true                              
                         //icon: 'http://maps.google.com/mapfiles/kml/paddle/go.png',
                     });
+                if(seeker_id) marker.setIdSeeker(seeker_id);
                 // If it's not the first mark, must be the second. (Just two markers allowed)
                 if(scope.gmapvals.markers.length >= 1 ){
                     marker.setIcon(img_end_rt);
@@ -177,8 +183,9 @@ angular.module('pooling.maps.directives', [])
                     console.log('in watch');
                     console.log(seeker);
                     deleteAllMarkers();
-                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.start_point.coordinates[0], seeker.start_point.coordinates[1]));
-                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.end_point.coordinates[0], seeker.end_point.coordinates[1]));
+                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.start_point.coordinates[0], seeker.start_point.coordinates[1]), seeker.id);
+                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.end_point.coordinates[0], seeker.end_point.coordinates[1]), seeker.id);
+                    console.log(scope.gmapvals.markers);
                 }
             });
         };

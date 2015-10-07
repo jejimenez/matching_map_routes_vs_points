@@ -66,8 +66,7 @@
       }
       console.log($scope.gmapvals.markers);
         //create seeker object
-
-        GoMapSrv.setMarkersSeeker({
+        var seeker = {
           start_lat : $scope.gmapvals.markers[0].getPosition().lat(),
           start_lng : $scope.gmapvals.markers[0].getPosition().lng(),
           start_point : "POINT("+$scope.gmapvals.markers[0].getPosition().lat()+" "+$scope.gmapvals.markers[0].getPosition().lng()+")",
@@ -76,9 +75,20 @@
           end_point : "POINT("+$scope.gmapvals.markers[1].getPosition().lat()+" "+$scope.gmapvals.markers[1].getPosition().lng()+")",
           schedule : "1",
           description : ""
-        })
-        .success(loginSuccessFn)
-        .error(loginErrFn);
+        };
+        if($scope.gmapvals.markers[0].getIdSeeker()){
+          seeker.id = $scope.gmapvals.markers[0].getIdSeeker();
+          seeker.description = 'MODIFIED!!!!!!!!!!!!!1';
+          console.log(seeker);
+          GoMapSrv.updateMarkerSeeker(seeker)
+          .success(loginSuccessFn)
+          .error(loginErrFn);
+        }
+        else{ 
+          GoMapSrv.setMarkersSeeker(seeker)
+          .success(loginSuccessFn)
+          .error(loginErrFn);
+        }
 
       function loginSuccessFn(data, status, headers, config) {
         toastr['success']('Exitosamente creado.');

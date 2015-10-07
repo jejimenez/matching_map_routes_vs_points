@@ -14,15 +14,20 @@ import json
 class SeekerViewSet(viewsets.ModelViewSet):
     queryset = Seeker.objects.all()
     serializer_class = SeekerSerializer
+    print('okk');
 
     def get_permissions(self):
         #if self.request.method in permissions.SAFE_METHODS:
         #    return (permissions.AllowAny(),)
         return (permissions.IsAuthenticated(),)
-    
+
     def perform_create(self, serializer):
         instance = serializer.save(user=self.request.user)
         return super(SeekerViewSet, self).perform_create(serializer)
+
+    def perform_update(self, serializer):
+        instance = serializer.save(user=self.request.user)
+        return super(SeekerViewSet, self).perform_update(serializer)
 
 
 class AccountSeekerViewSet(viewsets.ViewSet):

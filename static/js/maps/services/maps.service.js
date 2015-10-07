@@ -26,6 +26,7 @@
     var seekers;
     var GoMapSrv = {
       setMarkersSeeker: setMarkersSeeker,
+      updateMarkerSeeker: updateMarkerSeeker,
       getMarkersSeeker: getMarkersSeeker,
       setSeekersData: setSeekersData,
       seekers:seekers,
@@ -37,6 +38,11 @@
     function setMarkersSeeker(seeker) {
       //toastr["info"]("esta es la funcion de insertar los markers");
       return $http.post('/api/v1/pooling/seekers/', seeker); 
+    }
+
+    function updateMarkerSeeker(seeker){
+
+      return $http.put('/api/v1/pooling/seekers/' + seeker.id + '/', seeker);
     }
 
     function getMarkersSeeker(username) {
