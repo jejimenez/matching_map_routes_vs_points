@@ -7,5 +7,22 @@
 	    <i class="save icon"></i>
 	  </div>
 	</div>
+	<div id="btn_new_markers" class="ui animated teal button" ng-click='addMarkersSeeker()' >
+	  <div class="hidden content">Nuevos Puntos</div>
+	  <div class="visible content">
+	    <i class="add square icon"></i>
+	  </div>
+	</div>
+	<div id="btn_delete_markers" class="ui animated teal button" ng-click='deleteMarkersSeeker()' >
+	  <div class="hidden content">Borrar</div>
+	  <div class="visible content">
+	    <i class="add square icon"></i>
+	  </div>
+	</div>
 <div class="ui vertical animated teal button"  ng-click='showMessage()'  >Click to see</div>
+
+<div ng-repeat="seeker in initSeekers track by seeker.id">
+  <a href="" ng-click='setMarkersSeeker(seeker)' >{{seeker.id}} - {{seeker.user.email}}</a><a href="" ng-click='deleteMarkersSeeker(seeker)' >(X)</a>
+</div>
+
 </div>

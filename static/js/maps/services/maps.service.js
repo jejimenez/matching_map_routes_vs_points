@@ -28,7 +28,7 @@
       setMarkersSeeker: setMarkersSeeker,
       updateMarkerSeeker: updateMarkerSeeker,
       getMarkersSeeker: getMarkersSeeker,
-      setSeekersData: setSeekersData,
+      deleteMarkersSeeker:deleteMarkersSeeker,
       seekers:seekers,
     };
 
@@ -50,9 +50,8 @@
       return $http.get('/api/v1/pooling/accounts/'+username+'/seekers/'); 
     }
 
-    function setSeekersData(data){
-      seekers = data;
+    function deleteMarkersSeeker(seeker) {
+      return $http.delete('/api/v1/pooling/seekers/' + seeker.id + '/');
     }
- 
   }
 })();

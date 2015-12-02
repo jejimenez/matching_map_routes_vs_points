@@ -26,6 +26,9 @@
       zoom: 11,
     };
 
+    $scope.google;
+
+    $scope.authenticatedAccount = Authentication.getAuthenticatedAccount();
 
     /**
     * @name initMapUserValues
@@ -37,20 +40,20 @@
 
     function initMapUserValues (){
       if(Authentication.isAuthenticated()){
-        var authenticatedAccount = Authentication.getAuthenticatedAccount();
-        GoMapSrv.getMarkersSeeker(authenticatedAccount.username)
-        .success(setSeekersMap);
-
-        function setSeekersMap(data, status, headers, config){
-          //GoMapSrv.setSeekersData(data);
-          $scope.initSeekers = data;
-          
-        }
-        //console.log($scope.GoMapSrv.seekers);
+        loadInitSeekers();
       }
       else
         console.log("no autenticado no cargar valores del usuario");
 
+    }
+
+    function loadInitSeekers(){
+      // reolad the initSeekers value
+      GoMapSrv.getMarkersSeeker($scope.authenticatedAccount.username)
+      .success(setSeekersMap);
+      function setSeekersMap(data, status, headers, config){
+        $scope.initSeekers = data;
+      }
     }
 
     /**
@@ -65,41 +68,67 @@
         return null;
       }
       console.log($scope.gmapvals.markers);
-        //create seeker object
-        var seeker = {
-          start_lat : $scope.gmapvals.markers[0].getPosition().lat(),
-          start_lng : $scope.gmapvals.markers[0].getPosition().lng(),
-          start_point : "POINT("+$scope.gmapvals.markers[0].getPosition().lat()+" "+$scope.gmapvals.markers[0].getPosition().lng()+")",
-          end_lat : $scope.gmapvals.markers[1].getPosition().lat(),
-          end_lnt : $scope.gmapvals.markers[1].getPosition().lng(),
-          end_point : "POINT("+$scope.gmapvals.markers[1].getPosition().lat()+" "+$scope.gmapvals.markers[1].getPosition().lng()+")",
-          schedule : "1",
-          description : ""
-        };
-        if($scope.gmapvals.markers[0].getIdSeeker()){
-          seeker.id = $scope.gmapvals.markers[0].getIdSeeker();
-          seeker.description = 'MODIFIED!!!!!!!!!!!!!1';
-          console.log(seeker);
-          GoMapSrv.updateMarkerSeeker(seeker)
-          .success(loginSuccessFn)
-          .error(loginErrFn);
-        }
-        else{ 
-          GoMapSrv.setMarkersSeeker(seeker)
-          .success(loginSuccessFn)
-          .error(loginErrFn);
+      //create seeker object
+      var seeker = {
+        start_lat : $scope.gmapvals.markers[0].getPosition().lat(),
+        start_lng : $scope.gmapvals.markers[0].getPosition().lng(),
+        start_point : "POINT("+$scope.gmapvals.markers[0].getPosition().lat()+" "+$scope.gmapvals.markers[0].getPosition().lng()+")",
+        end_lat : $scope.gmapvals.markers[1].getPosition().lat(),
+        end_lnt : $scope.gmapvals.markers[1].getPosition().lng(),
+        end_point : "POINT("+$scope.gmapvals.markers[1].getPosition().lat()+" "+$scope.gmapvals.markers[1].getPosition().lng()+")",
+        schedule : "1",
+        description : ""
+      };
+      if($scope.gmapvals.markers[0].getIdSeeker()){
+        seeker.id = $scope.gmapvals.markers[0].getIdSeeker();
+        seeker.description = 'MODIFIED!!!!!!!!!!!!!1';
+        console.log(seeker);
+        GoMapSrv.updateMarkerSeeker(seeker)
+        .success(updatedSuccessFn)
+        .error(errFn);
+      }
+      else{ 
+        GoMapSrv.setMarkersSeeker(seeker)
+        .success(createSuccessFn)
+        .error(errFn);
         }
 
-      function loginSuccessFn(data, status, headers, config) {
-        toastr['success']('Exitosamente creado.');
+      function updatedSuccessFn(data, status, headers, config) {
+        toastr['success']('Exitosamente modificado.');
+        // reolad the initSeekers value
+        loadInitSeekers();
       }
-      function loginErrFn(data, status, headers, config) {
+      function createSuccessFn(data, status, headers, config) {
+        toastr['success']('Exitosamente creado.');
+        // reolad the initSeekers value
+        loadInitSeekers();
+      }
+      function errFn(data, status, headers, config) {
         toastr['error']('Error: '+data.detail+'-'+status);
       }
     };
 
-    $scope.showMessage = function (){
-      $scope.seekers = $scope.initSeekers[1];
+    $scope.deleteMarkersSeeker = function (seeker){
+      var seeker_del = (seeker ? seeker : $scope.seekers );
+      GoMapSrv.deleteMarkersSeeker(seeker_del)
+      .success(deleteSuccessFn)
+      .error(errFn);
+      
+      function deleteSuccessFn(){
+        loadInitSeekers();
+        $scope.seekers = $scope.initSeekers[0];
+        toastr['success']('Exitosamente eliminado');
+      }
+      function errFn(data, status, headers, config) {
+        toastr['error']('Error: '+data.detail+'-'+status);
+      }
+    };
+
+    // add a new seeker
+    $scope.addMarkersSeeker = function (){
+      //$scope.seekers = $scope.initSeekers[1];
+      $scope.seekers = {};
+
       /*
       $scope.seekers = {
         end_lat: 4.62570408986198200000,
@@ -110,8 +139,16 @@
         start_lat: 4.78446896657937500000,
         start_lng: -74.06021118164062000000,
       }*/
-
-
     };
+
+    // set the value of seeker in scope to show the markers in map
+    $scope.setMarkersSeeker = function(seeker){
+      $scope.seekers = seeker;
+    }
+
+    // check when google maps is ready to get the value in scope
+    $scope.$on('gmap.ready', function (event, google) {
+      $scope.google = google;
+    });
   }
 })();
