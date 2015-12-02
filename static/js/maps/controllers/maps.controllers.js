@@ -100,6 +100,9 @@
       }
       function createSuccessFn(data, status, headers, config) {
         toastr['success']('Exitosamente creado.');
+        console.log(data);
+        data.show_message = false;
+        $scope.seekers = data;
         // reolad the initSeekers value
         loadInitSeekers();
       }

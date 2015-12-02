@@ -117,7 +117,8 @@ angular.module('pooling.maps.directives', [])
             /**
             * place the markers. Just two markers, start rout and end rout.
             **/
-            function placeMarkerOnUserClick(location, seeker_id) {
+            function placeMarkerOnUserClick(location, seeker_id, show_message) {
+                show_message = typeof show_message !== 'undefined' ? show_message : true;
                 var 
                     marker = new appooling.google_maps_Marker_Seeker({
                         position: location, 
@@ -137,13 +138,13 @@ angular.module('pooling.maps.directives', [])
                         scope.gmapvals.markers[1].setMap(null);
                         scope.gmapvals.markers.splice(1);
                     }
-                    toastr["info"](msg_marker_added_end);
+                    if(show_message)toastr["info"](msg_marker_added_end);
                 }//If it's the first marker
                 else{
                     marker.setTitle(str_start_rt);
                     marker.setIcon(img_start_rt);
                     marker.setPlnType(strPlnTypeStart);
-                    toastr["info"](msg_marker_added_start);
+                    if(show_message)toastr["info"](msg_marker_added_start);
                 }
                 scope.gmapvals.markers.push(marker);
                 //scope.gmapvals.markers = markers;
@@ -167,10 +168,11 @@ angular.module('pooling.maps.directives', [])
             scope.$watch(function() { return scope.seekers; }, function(seeker) {
                 var i = 0;
                 deleteAllMarkers();
-                if(seeker && seeker.start_point && seeker.end_point){
-                    console.log('in watch');
-                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.start_point.coordinates[0], seeker.start_point.coordinates[1]), seeker.id);
-                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.end_point.coordinates[0], seeker.end_point.coordinates[1]), seeker.id);
+                console.log('in watch');
+                if(seeker && seeker.start_point && seeker.end_point && seeker.id){
+                    seeker.show_message = typeof seeker.show_message === 'undefined' ?  false : seeker.show_message;
+                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.start_point.coordinates[0], seeker.start_point.coordinates[1]), seeker.id, seeker.show_message);
+                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.end_point.coordinates[0], seeker.end_point.coordinates[1]), seeker.id, seeker.show_message);
                     console.log(scope.gmapvals.markers);
                 }
             });
