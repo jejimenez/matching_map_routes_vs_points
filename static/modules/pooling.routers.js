@@ -43,20 +43,20 @@
         // HOME STATES AND NESTED VIEWS ========================================
       .state('home', {
         url: '/home',
-        templateUrl: '/static/templates/layout/index.html'
+        templateUrl: '/static/modules/layout/views/index.html'
       })
         
         // ABOUT PAGE AND MULTIPLE NAMED VIEWS =================================
         .state('login', {
       controller: 'LoginController',
       url: '/login',
-      templateUrl: '/static/templates/authentication/login.html'   
+      templateUrl: '/static/modules/authentication/views/login.html'   
         })
         // ABOUT PAGE AND MULTIPLE NAMED VIEWS =================================
         .state('register', {
       controller: 'RegisterController',
       url: '/register',
-      templateUrl: '/static/templates/authentication/register.html' 
+      templateUrl: '/static/modules/authentication/views/register.html' 
         });
       }
         

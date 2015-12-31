@@ -7,6 +7,7 @@
     <script type="text/javascript">
 
         var STATIC_FILES    = "{% static '' %}";
+        var USER_AUTH = {% if user.is_authenticated %}true{% else %}false{% endif %};
 
         WebFontConfig = {
             google: { families: ['Open+Sans:latin'] }

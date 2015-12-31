@@ -8,10 +8,8 @@
 angular.module('pooling.maps.directives', [])
 .directive('gMap', gMapDirective);
 
-
-  gMapDirective.$inject = ['$window', '$parse', '$timeout', '$interval', 'GoMapSrv','$rootScope' ];
-
-
+    gMapDirective.$inject = ['$window', '$parse', '$timeout', '$interval', 'GoMapSrv','$rootScope' ];
+    
     function gMapDirective($window,$parse,$timeout,$interval,GoMapSrv, $rootScope) {
         var counter = 0,
         prefix = '__ep_gmap_',
@@ -24,9 +22,37 @@ angular.module('pooling.maps.directives', [])
         strPlnTypeStart = 'start',
         strPlnTypeEnd = 'end';
 
-        var link = function (scope, element, attrs, controller, rootScope) {
-            
-            //function called in timeout
+        var rtrn = {
+            restrict: 'E',
+            replace: false,
+            controller: 'GoMapsController',
+            scope: {idmap: '@'},
+            templateUrl: 'static/modules/maps/views/gmap.html',
+            transclude: true,
+            link: link
+        };
+        return rtrn;
+
+
+        function link(scope, element, attrs, controller, rootScope) {
+
+            // hack to execute the directive function when document loaded 
+            $timeout(function(){directive_function (scope, element, attrs, controller)}, 0);
+
+            // when scope.seekers value change, delete the markers and place the markers of the new value of srope.seekers
+            scope.$watch(function() { return scope.seekers; }, function(seeker) {
+                var i = 0;
+                deleteAllMarkers();
+                console.log('in watch');
+                if(seeker && seeker.start_point && seeker.end_point && seeker.id){
+                    seeker.show_message = typeof seeker.show_message === 'undefined' ?  false : seeker.show_message;
+                    placeMarker(new google.maps.LatLng(seeker.start_point.coordinates[0], seeker.start_point.coordinates[1]), seeker.id, seeker.show_message);
+                    placeMarker(new google.maps.LatLng(seeker.end_point.coordinates[0], seeker.end_point.coordinates[1]), seeker.id, seeker.show_message);
+                    console.log(scope.gmapvals.markers);
+                }
+            });
+
+            //function called in timeout to load google maps and create the elements
             function directive_function (scope, element, attrs, controller){
                 var model = scope.gmapvals;
                 var maps_arr = [];
@@ -36,12 +62,8 @@ angular.module('pooling.maps.directives', [])
                     maps_arr.push(injectGoogle());                    
                 };
                 
-                function log(str){toastr["success"](str);}
                 function gMapInit() {
-                    // Customized map markers Objects to use from the app 
-                    appooling.google_maps_Marker_Seeker = pooling_tools.getObjMarkersSeekers();
                     //
-
                     var i=0;                   
                     var directionsDisplay = new google.maps.DirectionsRenderer({
                         draggable: true
@@ -50,20 +72,33 @@ angular.module('pooling.maps.directives', [])
                             center: new google.maps.LatLng(model.Lat, model.Lon),
                             zoom: model.zoom,
                             mapTypeId: google.maps.MapTypeId.ROADMAP
-                    };//, objMap;
+                    };
+                    // Customized map markers Objects
+                    appooling.google_maps_Marker_Seeker = pooling_tools.getObjMarkersSeekers();
                     scope.gmapvals.markers = [];
-
-                    try{scope.objMap = new google.maps.Map(document.getElementById(attrs.idmap),mapOptions)}
-                    catch(err){console.error(err);return false;}
+                    scope.objMap = new google.maps.Map(document.getElementById(attrs.idmap),mapOptions);
                     // add your fixed business marker
                     directionsDisplay.setMap(scope.objMap);
                     //on click place marker
-                    google.maps.event.addListener(scope.objMap, 'click', function(event) {
-                       placeMarkerOnUserClick(event.latLng);
-                    });
+                    google.maps.event.addListener(scope.objMap, 'click', function(event){placeMarker(event.latLng);});
                     //on loaded show message and place initial markers
-                    google.maps.event.addListenerOnce(scope.objMap, 'tilesloaded', function(){
-                        log("Mapa cargado!");
+                    google.maps.event.addListenerOnce(scope.objMap, 'tilesloaded', tilesloaded);
+                    // On directions changed
+                    google.maps.event.addListener(directionsDisplay, 'directions_changed', function () {});
+
+                    // Try HTML5 geolocation
+                    /*
+                    if ("geolocation" in navigator) {
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            var pos = new google.maps.LatLng(position.coords.latitude,
+                                                             position.coords.longitude);
+                            scope.objMap.setCenter(pos);
+                        });
+                    }*/
+                    counter++;
+
+                    function tilesloaded(){
+                        toastr["success"]("Mapa cargado!");
                         // Propagate the value of google just when loaded completely
                         $rootScope.$broadcast('gmap.ready', google);
                         // if initial seekers markers are setted, place it
@@ -72,23 +107,7 @@ angular.module('pooling.maps.directives', [])
                                 scope.seekers = scope.initSeekers[0];
                             });
                         }
-                    });
-
-                    // Try HTML5 geolocation
-                    if ("geolocation" in navigator) {
-                        navigator.geolocation.getCurrentPosition(function (position) {
-                            var pos = new google.maps.LatLng(position.coords.latitude,
-                                                             position.coords.longitude);
-                            scope.objMap.setCenter(pos);
-                            scope.$apply(function () {
-                                model.fromAddress = pos;
-                            });
-                        });
                     }
-                    // On directions changed
-                    google.maps.event.addListener(directionsDisplay, 'directions_changed', function () {});
-
-                    counter++;
                 };
 
                 /*
@@ -117,7 +136,7 @@ angular.module('pooling.maps.directives', [])
             /**
             * place the markers. Just two markers, start rout and end rout.
             **/
-            function placeMarkerOnUserClick(location, seeker_id, show_message) {
+            function placeMarker(location, seeker_id, show_message) {
                 show_message = typeof show_message !== 'undefined' ? show_message : true;
                 var 
                     marker = new appooling.google_maps_Marker_Seeker({
@@ -150,8 +169,7 @@ angular.module('pooling.maps.directives', [])
                 //scope.gmapvals.markers = markers;
                 //console.log(marker);
             };
-
-            // Delete all the markers
+            // Delete all the markers from array and gmaps object
             function deleteAllMarkers(){
               if(scope.gmapvals.markers && scope.gmapvals.markers.length  > 0){
                   for (var i = 0; i < scope.gmapvals.markers.length; i++) {
@@ -160,34 +178,6 @@ angular.module('pooling.maps.directives', [])
                   scope.gmapvals.markers = [];
               }
             };
-
-            // hack to execute the directive function when document loaded 
-            $timeout(function(){directive_function (scope, element, attrs, controller)}, 0);
-
-            // when scope.seekers value change, delete the markers and place the markers of the new value of srope.seekers
-            scope.$watch(function() { return scope.seekers; }, function(seeker) {
-                var i = 0;
-                deleteAllMarkers();
-                console.log('in watch');
-                if(seeker && seeker.start_point && seeker.end_point && seeker.id){
-                    seeker.show_message = typeof seeker.show_message === 'undefined' ?  false : seeker.show_message;
-                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.start_point.coordinates[0], seeker.start_point.coordinates[1]), seeker.id, seeker.show_message);
-                    placeMarkerOnUserClick(new google.maps.LatLng(seeker.end_point.coordinates[0], seeker.end_point.coordinates[1]), seeker.id, seeker.show_message);
-                    console.log(scope.gmapvals.markers);
-                }
-            });
         };
-        var rtrn = {
-            restrict: 'E',
-            replace: false,
-            controller: 'GoMapsController',
-            scope: {idmap: '@'},
-            templateUrl: 'static/templates/maps/gmap.html',
-            transclude: true,
-            link: link
-        };
-
-        return rtrn;
-    }
-
+    };
 })();

@@ -30,6 +30,12 @@ h1, h2, h3, h4, h5
     border-bottom: 1px solid #757575 !important;*/
 }
 
+login_error{
+    -webkit-transition:all linear 0.5s;
+    transition:all linear 0.5s;
+    
+}
+
 .form-holder {
     background: rgba(255,255,255,0.2);
     margin-top: 10%;

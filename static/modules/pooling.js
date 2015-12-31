@@ -31,9 +31,19 @@
   * @name run
   * @desc Update xsrf $http headers to align with Django's defaults
   */
-  function run($http) {
+  function run($http, Authentication) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
+    // Check if the user is authenticated in server and have the cookie created 
+    if(USER_AUTH){
+      if(typeof Cookies.get('authenticatedAccount') === 'undefined')
+        console.log('no cookies present');
+    }
+    else{
+      if(typeof Cookies.get('authenticatedAccount') !== 'undefined'){
+        Cookies.remove('authenticatedAccount');
+      }
+    }
   }
 
   

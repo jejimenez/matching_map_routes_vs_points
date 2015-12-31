@@ -42,9 +42,6 @@
       if(Authentication.isAuthenticated()){
         loadInitSeekers();
       }
-      else
-        console.log("no autenticado no cargar valores del usuario");
-
     }
 
     function loadInitSeekers(){
