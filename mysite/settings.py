@@ -44,6 +44,11 @@ INSTALLED_APPS = (
     'compressor',
     'mysite',
     'authentication',
+    #<oauth2
+    'oauth2_provider',
+    'social.apps.django_app.default',
+    'rest_framework_social_oauth2',
+    #>oauth2
     'pooling',
 )
 
@@ -75,6 +80,11 @@ TEMPLATES = [
         },
     },
 ]
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
@@ -131,5 +141,27 @@ AUTH_USER_MODEL = 'authentication.Account'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
+        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+        'rest_framework_social_oauth2.authentication.SocialAuthentication',
     )
 }
+
+AUTHENTICATION_BACKENDS = (
+    # Facebook OAuth2
+    'social.backends.facebook.FacebookAppOAuth2',
+    'social.backends.facebook.FacebookOAuth2',
+
+    # django-rest-framework-social-oauth2
+    'rest_framework_social_oauth2.backends.DjangoOAuth2',
+
+    # Django
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+# Facebook configuration
+SOCIAL_AUTH_FACEBOOK_KEY = '1662044797371224'
+SOCIAL_AUTH_FACEBOOK_SECRET = '048319852bdba3482c18cfda51ae558c'
+
+# Define SOCIAL_AUTH_FACEBOOK_SCOPE to get extra permissions from facebook. Email is not sent by default, to get it, you must request the email permission:
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']

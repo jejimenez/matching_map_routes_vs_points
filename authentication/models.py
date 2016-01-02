@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.contrib.auth.models import BaseUserManager
 
@@ -26,11 +26,12 @@ class AccountManager(BaseUserManager):
 
 		account.is_admin = True
 		account.is_staff = True
+		account.is_superuser = True
 		account.save()
 
 		return account
 
-class Account(AbstractBaseUser):
+class Account(AbstractBaseUser, PermissionsMixin):
 	email = models.EmailField(unique=True)
 	username = models.CharField(max_length=40, unique=True)
 

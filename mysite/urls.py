@@ -22,6 +22,7 @@ from .views import IndexPoolingView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^auth/', include('rest_framework_social_oauth2.urls')),
     url(r'^$',IndexPoolingView.as_view(),name='index'),
     url(r'^', include('authentication.urls')),
     url(r'^', include('pooling.urls')),
