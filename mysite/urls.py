@@ -22,8 +22,15 @@ from .views import IndexPoolingView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^auth/', include('rest_framework_social_oauth2.urls')),
+    #
+    url(r'^social/', include('rest_framework_social_oauth2.urls')),
+    #url(r'^social/', include('social_auth.urls')),
+    #url('', include('social.apps.django_app.urls')),
+    #url(r'^social/', include('social.apps.django_app.urls', namespace='social')),
+    #url(r'^auth/', include('rest_framework_social_oauth2.urls')),
     url(r'^$',IndexPoolingView.as_view(),name='index'),
     url(r'^', include('authentication.urls')),
     url(r'^', include('pooling.urls')),
+    #
+    #url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]

@@ -35,9 +35,10 @@
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
     // Check if the user is authenticated in server and have the cookie created 
+    console.log("USER_AUTH : "+USER_AUTH);
     if(USER_AUTH){
-      if(typeof Cookies.get('authenticatedAccount') === 'undefined')
-        console.log('no cookies present');
+      if(typeof Cookies.get('authenticatedAccount') === 'undefined'){console.log('no cookies present');
+        }
     }
     else{
       if(typeof Cookies.get('authenticatedAccount') !== 'undefined'){

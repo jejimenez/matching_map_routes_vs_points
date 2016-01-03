@@ -9,16 +9,19 @@
     .module('thinkster.authentication.controllers')
     .controller('LoginController', LoginController);
 
-  LoginController.$inject = ['$location', '$scope', 'Authentication'];
+  LoginController.$inject = ['$location', '$scope', '$http', 'Authentication', 'FacebookService'];
 
   /**
   * @namespace LoginController
   */
-  function LoginController($location, $scope, Authentication) {
+  function LoginController($location, $scope, $http, Authentication, FacebookService) {
     var vm = this;
     var loginForm = $('.ui.form.login');
     var errorForm = $('.ui.login.error');
     var val_result = false;
+
+    vm.login = login;
+    vm.login_fb = login_fb;
 
     //semantic validation rules and parameters
     (function ($) {
@@ -60,8 +63,6 @@
     }(jQuery));
 
 
-    vm.login = login;
-
     activate();
 
     /**
@@ -75,6 +76,44 @@
         //$location.url('/');
         window.location = '/';
       }
+    }
+
+
+    /**
+    * @name login_fb
+    * @desc Log the user in with facebook service
+    * @memberOf thinkster.authentication.controllers.LoginController
+    */
+    function login_fb(){
+       
+           FacebookService.login().then(function(response){
+               //we come here only if JS sdk login was successful so lets 
+               //make a request to our new view. I use Restangular, one can
+               //use regular http request as well.
+               var reqObj = {access_token: response.authResponse.accessToken,
+                          backend: "facebook",
+                          headers: {access_token: response.authResponse.accessToken, backend: "facebook"}
+                        };
+               //var u_b = Restangular.all('sociallogin/');
+               //u_b.post(reqObj)
+               //$http.post('/api/v1/auth/sociallogin/', reqObj)
+               $http({
+                  url: '/api/v1/auth/sociallogin/',
+                  method: 'POST',
+                  headers: {
+                   'Authorization': 'bearer facebook '+response.authResponse.accessToken},
+                  data: {access_token: response.authResponse.accessToken, backend: "facebook"}
+                })
+               .then(function(response) {
+                  console.log(response)
+                  Authentication.setAuthenticatedAccount(response);
+                  window.location = '/';
+                  console.log("OKk");
+               }, function(response) { /*error*/
+                   console.log("There was an error", response);
+                   //deal with error here. 
+               });  
+           });
     }
 
     /**

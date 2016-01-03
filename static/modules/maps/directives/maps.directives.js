@@ -43,7 +43,7 @@ angular.module('pooling.maps.directives', [])
             scope.$watch(function() { return scope.seekers; }, function(seeker) {
                 var i = 0;
                 deleteAllMarkers();
-                console.log('in watch');
+                //console.log('in watch');
                 if(seeker && seeker.start_point && seeker.end_point && seeker.id){
                     seeker.show_message = typeof seeker.show_message === 'undefined' ?  false : seeker.show_message;
                     placeMarker(new google.maps.LatLng(seeker.start_point.coordinates[0], seeker.start_point.coordinates[1]), seeker.id, seeker.show_message);
