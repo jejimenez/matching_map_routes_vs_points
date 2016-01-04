@@ -1,0 +1,6 @@
+﻿
+
+delete from pooling_seeker where user_id = 3;
+delete from social_auth_usersocialauth where user_id = 3
+ delete from authentication_account where id=3 ;
+
