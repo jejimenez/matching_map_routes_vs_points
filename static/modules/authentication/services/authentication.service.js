@@ -97,6 +97,14 @@
        * @desc Unauthenticate and redirect to index with page reload
        */
       function logoutSuccessFn(data, status, headers, config) {
+          //Chek if facebook login
+          FB.getLoginStatus(function(response) {
+            console.log(response.status)
+            if(response.status == 'connected'){
+              FB.logout(function(response) {console.log('loged out from facebook')});
+            }
+          });
+
         Authentication.unauthenticate();
         window.location = window.location;
       }

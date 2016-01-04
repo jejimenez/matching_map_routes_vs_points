@@ -25,6 +25,7 @@
     * @memberOf thinkster.layout.controllers.NavbarController
     */
     function logout() {
+
       Authentication.logout();
     }
   }

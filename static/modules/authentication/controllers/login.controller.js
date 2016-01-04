@@ -22,6 +22,7 @@
 
     vm.login = login;
     vm.login_fb = login_fb;
+    vm.loadFriends = loadFriends;
 
     //semantic validation rules and parameters
     (function ($) {
@@ -105,16 +106,32 @@
                   data: {access_token: response.authResponse.accessToken, backend: "facebook"}
                 })
                .then(function(response) {
-                  console.log(response)
-                  Authentication.setAuthenticatedAccount(response);
+                  console.log(response.data)
+                  Authentication.setAuthenticatedAccount(response.data);
+
+                   FB.api('/me', function(response) {
+                     console.log('Good to see you, ' + response.name + '.');
+                   });
                   window.location = '/';
-                  console.log("OKk");
                }, function(response) { /*error*/
                    console.log("There was an error", response);
                    //deal with error here. 
                });  
            });
     }
+
+
+    function loadFriends() {
+      console.log("loadFriends")
+      FB.api('/me', function(response) {
+        console.log("FB_api")
+        $scope.$apply(function() {
+          vm.myFriends = response.data;
+          console.log(vm.myFriends);
+        });
+
+      });
+    };
 
     /**
     * @name login
