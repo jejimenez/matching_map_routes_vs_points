@@ -9,20 +9,21 @@
     .module('thinkster.authentication.controllers')
     .controller('LoginController', LoginController);
 
-  LoginController.$inject = ['$location', '$scope', '$http', 'Authentication', 'FacebookService'];
+  LoginController.$inject = ['$location', '$scope', '$http', 'Authentication', 'SocialMediaService'];
 
   /**
   * @namespace LoginController
   */
-  function LoginController($location, $scope, $http, Authentication, FacebookService) {
+  function LoginController($location, $scope, $http, Authentication, SocialMediaService) {
     var vm = this;
     var loginForm = $('.ui.form.login');
     var errorForm = $('.ui.login.error');
     var val_result = false;
+    var auth2;
 
     vm.login = login;
     vm.login_fb = login_fb;
-    vm.loadFriends = loadFriends;
+    vm.login_g = login_g;
 
     //semantic validation rules and parameters
     (function ($) {
@@ -79,6 +80,40 @@
       }
     }
 
+    function login_g(){
+      SocialMediaService.go_login(function(res){
+        console.log(res);
+        /*$http({
+                  url: '/api/v1/auth/socialdatasave/',
+                  method: 'POST',
+                  headers: {'Authorization' : 'bearer '+"google-oauth2"+' '+res.access_token},
+                  data: {access_token: res.access_token, backend: "google-oauth2"}
+                });*/
+         SocialMediaService.social_login("google-oauth2", res.access_token, res)
+         .then(function(resp){
+            Authentication.setAuthenticatedAccount(resp.data);
+            window.location = '/';
+         });
+      });
+/*
+      if(typeof gapi.auth2 === 'undefined'){
+        console.error('Google api auth is not loaded');
+      }
+      else{
+          auth2 = gapi.auth2.getAuthInstance(); 
+          auth2.signIn().then(function(resp){
+            console.log(resp);
+            console.log(auth2.currentUser.get().getBasicProfile());
+
+            gapi.client.plus.people.list({
+              'userId': 'me',
+              'collection': 'visible'
+            }).then(function(res) {
+              console.log(res);
+            });
+          });
+      }*/
+    }
 
     /**
     * @name login_fb
@@ -87,51 +122,19 @@
     */
     function login_fb(){
        
-           FacebookService.login().then(function(response){
+           SocialMediaService.fb_login().then(function(fbresponse){
                //we come here only if JS sdk login was successful so lets 
                //make a request to our new view. I use Restangular, one can
                //use regular http request as well.
-               var reqObj = {access_token: response.authResponse.accessToken,
-                          backend: "facebook",
-                          headers: {access_token: response.authResponse.accessToken, backend: "facebook"}
-                        };
-               //var u_b = Restangular.all('sociallogin/');
-               //u_b.post(reqObj)
-               //$http.post('/api/v1/auth/sociallogin/', reqObj)
-               $http({
-                  url: '/api/v1/auth/sociallogin/',
-                  method: 'POST',
-                  headers: {
-                   'Authorization': 'bearer facebook '+response.authResponse.accessToken},
-                  data: {access_token: response.authResponse.accessToken, backend: "facebook"}
-                })
-               .then(function(response) {
-                  console.log(response.data)
-                  Authentication.setAuthenticatedAccount(response.data);
-
-                   FB.api('/me', function(response) {
-                     console.log('Good to see you, ' + response.name + '.');
-                   });
+               console.log(JSON.parse(JSON.stringify(fbresponse.authResponse)));
+               SocialMediaService.social_login("facebook", fbresponse.authResponse.accessToken, fbresponse)
+               .then(function(resp){
+                  Authentication.setAuthenticatedAccount(resp.data);
                   window.location = '/';
-               }, function(response) { /*error*/
-                   console.log("There was an error", response);
-                   //deal with error here. 
-               });  
+               });
            });
     }
 
-
-    function loadFriends() {
-      console.log("loadFriends")
-      FB.api('/me', function(response) {
-        console.log("FB_api")
-        $scope.$apply(function() {
-          vm.myFriends = response.data;
-          console.log(vm.myFriends);
-        });
-
-      });
-    };
 
     /**
     * @name login

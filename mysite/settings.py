@@ -25,6 +25,8 @@ SECRET_KEY = '$7a)l^t2bw#kcw+(!jeb2-dqob%nyptvu1!f8^iqkh2#+p+l+1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DJANGO_LOG_LEVEL=DEBUG
+
 TASTYPIE_FULL_DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -150,6 +152,8 @@ AUTHENTICATION_BACKENDS = (
     # Facebook OAuth2
     'social.backends.facebook.FacebookAppOAuth2',
     'social.backends.facebook.FacebookOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    #'social.backends.google.GooglePlusAuth',
 
     # django-rest-framework-social-oauth2
     'rest_framework_social_oauth2.backends.DjangoOAuth2',
@@ -165,6 +169,50 @@ OAUTH2_PROVIDER = {
 # Facebook configuration
 SOCIAL_AUTH_FACEBOOK_KEY = '1662044797371224'
 SOCIAL_AUTH_FACEBOOK_SECRET = '048319852bdba3482c18cfda51ae558c'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '252960280952-f405uflnno97ivk5hlb863e94ulaojr0.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'DEg7vYjDQopyJCi7h7KA7NsC'
 
 # Define SOCIAL_AUTH_FACEBOOK_SCOPE to get extra permissions from facebook. Email is not sent by default, to get it, you must request the email permission:
-#SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+#SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'link', 'birthday', 'friends']
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['id','name,email','birthday','friends,gender','picture','link']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+  #'fields': 'id, name, email, link, friends, birthday'
+  'fields' : 'id,name,email,birthday,friends,gender,picture,link'
+}
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH_SCOPE  = ['https://www.googleapis.com/auth/userinfo.profile',]
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'mysite.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['file'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+        'MYSITE': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+    }
+}

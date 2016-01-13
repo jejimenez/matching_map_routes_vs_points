@@ -144,7 +144,25 @@
     // set the value of seeker in scope to show the markers in map
     $scope.setMarkersSeeker = function(seeker){
       $scope.seekers = seeker;
-    }
+    };
+
+
+    $scope.showMessage = function(){
+      console.log('showMessage');
+        //(FB.api('/me/friends', function(response) {
+         //console.log(response);
+       //});
+        FB.api('/me?fields=id,name,email,birthday,friends', function(response2) {
+         //console.log('Good to see you in IndexController, ' + response2.id + '.');
+         console.log(response2);
+//10153338846013061
+       });
+/*
+            FB.api('/10153338846013061', function(response3) {
+             console.log('Good to see you in IndexController, ' + response3.id + '.');
+             console.log(response3);
+           });*/
+    };
 
     // check when google maps is ready to get the value in scope
     $scope.$on('gmap.ready', function (event, google) {

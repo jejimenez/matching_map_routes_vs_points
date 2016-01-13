@@ -3,6 +3,15 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width">
+
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="252960280952-f405uflnno97ivk5hlb863e94ulaojr0.apps.googleusercontent.com">
+
+    <!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
+    <!--<script src="https://www.googleapis.com/auth/plus.login" async defer></script>-->
+    <!--<script src="https://apis.google.com/js/client:plusone.js" async defer></script>-->
+    <script src="https://apis.google.com/js/client:platform.js?onload=onloaded_gapi" async defer></script>
+    
     <script type="text/javascript" src="{% static 'bower_components/modernizr/modernizr.js' %}"></script>
     <script type="text/javascript">
 
@@ -21,6 +30,21 @@
             var s = document.getElementsByTagName('script')[0];
             s.parentNode.insertBefore(wf, s);
         })();
+        //Load google api
+        function onloaded_gapi()
+        {
+          //get your angular element
+          var elem = angular.element(document.querySelector('[ng-controller]'));
+          //get the injector.
+          var injector = elem.injector();
+          //get the service.
+          var myService = injector.get('SocialMediaService');
+          //update the service.
+          myService.load_gapi_auth();
+          //apply the changes to the scope.
+          elem.scope().$apply();
+        }
+    
     </script>
     <style type="text/css">
         .wf-loading * {opacity: 0;}
@@ -40,25 +64,7 @@
 </head>
 
 <body ng-app="pooling">
-<script>        
-    //facebook here
-    //***************************************************
-    window.fbAsyncInit = function() {
-    FB.init({
-        appId      : '1662044797371224',
-        status     : true,
-        xfbml      : true
-        });
-    };
-    
-    (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/all.js";
-     fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-</script>
+
 <div class='full_content_wrap'>  
   {% include 'navbar.html' %}
 <!--
@@ -81,5 +87,6 @@
     <div class='content_wrap' ui-view></div>
   {% include 'javascripts.html' %}
 </div>
+
 </body>
 </html>

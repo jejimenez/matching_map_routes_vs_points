@@ -14,7 +14,6 @@ import json
 class SeekerViewSet(viewsets.ModelViewSet):
     queryset = Seeker.objects.all()
     serializer_class = SeekerSerializer
-    print('okk');
 
     def get_permissions(self):
         #if self.request.method in permissions.SAFE_METHODS:

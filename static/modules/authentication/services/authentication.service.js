@@ -99,11 +99,18 @@
       function logoutSuccessFn(data, status, headers, config) {
           //Chek if facebook login
           FB.getLoginStatus(function(response) {
-            console.log(response.status)
             if(response.status == 'connected'){
               FB.logout(function(response) {console.log('loged out from facebook')});
             }
           });
+          //Check if google login
+          if(typeof gapi.auth2 != 'undefined' ){
+            var gauth = gapi.auth2.getAuthInstance();
+            if(gauth.isSignedIn.get()){
+              console.log('loged out from google');
+              gauth.signOut();
+            }
+          }
 
         Authentication.unauthenticate();
         window.location = window.location;

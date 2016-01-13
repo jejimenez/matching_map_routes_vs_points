@@ -17,8 +17,11 @@
         </div>
         </div>
         <div class="field">
-          <button class="ui button large fluid green" ng-click="vm.login()">sign in</button>
-        <button ng-click="vm.login_fb()">Login with Facebook</button>
+
+          <button class="ui button large fluid green" ng-click="vm.login()">Ingresar</button>
+          <button class="ui facebook button" ng-click="vm.login_fb()"><i class="facebook icon"></i>Ingresar con Facebook</button>
+          <button class="ui google button" id="google_login_btn" ng-click="vm.glogin()"><i class="google icon"></i>Ingresar con Google</button>
+    <div id="signin-button">new</div>
         </div>
         <div class="inline field">
           <div class="ui checkbox">
@@ -32,5 +35,4 @@
     </div>
   </div>
   <!--</form>-->
-  
 </div>

@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
-from authentication.views import LoginView, LogoutView, AccountViewSet, register_by_access_token, social_register
+from authentication.views import LoginView, LogoutView, AccountViewSet, social_register
 from rest_framework_nested import routers
 
 # add accounts/ url pattern to be added to urlpatterns variable 

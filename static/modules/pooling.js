@@ -23,7 +23,7 @@
   .module('pooling')
   .run(run);
 
-  run.$inject = ['$http'];
+  run.$inject = ['$http', '$window', '$rootScope', 'SocialMediaService'];
 
 
   var csrftoken = Cookies.get('csrftoken');
@@ -31,7 +31,7 @@
   * @name run
   * @desc Update xsrf $http headers to align with Django's defaults
   */
-  function run($http, Authentication) {
+  function run($http, $window, $rootScope, SocialMediaService) {
     $http.defaults.xsrfHeaderName = 'X-CSRFToken';
     $http.defaults.xsrfCookieName = 'csrftoken';
     // Check if the user is authenticated in server and have the cookie created 
@@ -44,7 +44,30 @@
       if(typeof Cookies.get('authenticatedAccount') !== 'undefined'){
         Cookies.remove('authenticatedAccount');
       }
-    }
+    };
+    //Facebook api  
+    $window.fbAsyncInit = function() {
+        FB.init({ 
+          appId      : '1662044797371224',
+          status: true, 
+          cookie: true, 
+          xfbml: true,
+          version: 'v2.4'
+        })};
+
+    (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    // Google api
+    /*
+    $rootScope.$on('$viewContentLoaded', function(event) {
+        SocialMediaService.load_gapi_auth();
+    });*/
   }
 
   
