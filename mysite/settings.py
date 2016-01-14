@@ -173,15 +173,13 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '252960280952-f405uflnno97ivk5hlb863e94ulaojr0.a
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'DEg7vYjDQopyJCi7h7KA7NsC'
 
 # Define SOCIAL_AUTH_FACEBOOK_SCOPE to get extra permissions from facebook. Email is not sent by default, to get it, you must request the email permission:
-#SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'link', 'birthday', 'friends']
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['id','name,email','birthday','friends,gender','picture','link']
-SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
-  #'fields': 'id, name, email, link, friends, birthday'
-  'fields' : 'id,name,email,birthday,friends,gender,picture,link'
-}
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['id','name','email','birthday','friends','gender','picture','link']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'fields' : 'id,name,email,birthday,friends,gender,picture,link'}
+SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = ['id','name','email','birthday','friends','gender','picture','link']
 
 
-SOCIAL_AUTH_GOOGLE_OAUTH_SCOPE  = ['https://www.googleapis.com/auth/userinfo.profile',]
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE  = ['https://www.googleapis.com/auth/userinfo.profile','https://www.googleapis.com/auth/plus.login']
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['id','name','email','ageRange','circledByCount','gender','image','url']
 
 
 LOGGING = {

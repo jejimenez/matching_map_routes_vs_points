@@ -3,7 +3,6 @@ from rest_framework import permissions, viewsets, status, views
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 
-from social.apps.django_app.utils import psa, load_strategy
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 
@@ -14,6 +13,8 @@ from authentication.serializers import AccountSerializer
 from rest_framework_social_oauth2.authentication import SocialAuthentication
 
 from rest_framework.authentication import BaseAuthentication, get_authorization_header
+from social.apps.django_app.utils import load_backend, load_strategy
+from social.exceptions import MissingBackend
 from rest_framework import exceptions, HTTP_HEADER_ENCODING
 from social.apps.django_app.views import NAMESPACE
 from django.core.urlresolvers import reverse
@@ -79,40 +80,31 @@ class LogoutView(views.APIView):
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-
 @csrf_exempt
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
-def social_register(request):
-    print("------------------------------------")
-    auth_token = request.DATA.get('access_token', None)
+def social_login(request):
+    """
+    Returns two-tuple of (user, token) if authentication succeeds,
+    or None otherwise.
+    """
+    token = request.DATA.get('access_token', None)
     backend = request.DATA.get('backend', None)
-    #user = auth_by_token(request, backend)
-    #print(NAMESPACE)
-    #print(reverse(NAMESPACE + ":complete", args=(backend,)))
+    strategy = load_strategy(request=request)
+    try:
+        backend = load_backend(strategy, backend, reverse(NAMESPACE + ":complete", args=(backend,)))
+    except MissingBackend:
+        msg = 'Invalid token header. Invalid backend.'
+        return Response(str(msg), status=400)
+    try:
+        user = backend.do_auth(access_token=token)
+    except requests.HTTPError as e:
+        msg = e.response.text
+        return Response(str(msg), status=400)
+    if not user:
+        msg = 'Bad credentials.'
+        return Response(str(msg), status=400)
 
-    #auth_header = get_authorization_header(request).decode(HTTP_HEADER_ENCODING)
-
-    #print(auth_header)
-    #auth = request.META.get('HTTP_AUTHORIZATION', b'')
-    #print(auth)
-    
-    #return Response("vamos a ver", status=300)
-    data = request.DATA.get('data')
-    print("------------------------------------")
-    print(auth_token+" - "+backend)
-    if auth_token and backend:
-        try:
-            sa = SocialAuthentication()
-            user, token = sa.authenticate(request)
-            print("user: "+str(user))
-            print("user: "+str(user.__dir__))
-            print("token: "+token)
-        except Exception as err:
-            return Response(str(err), status=400)
-        if user and token:
-            login(request, user)
-            serialized = AccountSerializer(user)
-            return Response(serialized.data, status=status.HTTP_200_OK )
-        else:
-            return Response("Bad Credentials: ", status=403)
+    login(request, user)
+    serialized = AccountSerializer(user)
+    return Response(serialized.data, status=status.HTTP_200_OK )

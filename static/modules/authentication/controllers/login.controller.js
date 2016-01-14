@@ -81,6 +81,7 @@
     }
 
     function login_g(){
+      console.log('login_g');
       SocialMediaService.go_login(function(res){
         console.log(res);
         /*$http({
@@ -121,7 +122,7 @@
     * @memberOf thinkster.authentication.controllers.LoginController
     */
     function login_fb(){
-       
+       console.log('login_fb');
            SocialMediaService.fb_login().then(function(fbresponse){
                //we come here only if JS sdk login was successful so lets 
                //make a request to our new view. I use Restangular, one can
@@ -142,6 +143,7 @@
     * @memberOf thinkster.authentication.controllers.LoginController
     */
     function login() {
+      console.log('normal login');
       loginForm.form('validate form');
       if(val_result === false){
         return;

@@ -68,22 +68,22 @@
           if (response.status === 'connected') {
               // the user is logged in and has authenticated your
               // app
-              console.log("fb user already logged in");
-              FB.api('/me?fields=id,name,email,birthday,friends,gender,picture,link', function(fbresponse) {
-                fbresponse.authResponse = response.authResponse;
-                deferred.resolve(fbresponse);
-              });
+              //console.log("fb user already logged in");
+              //FB.api('/me?fields=id,name,email,birthday,friends', function(fbresponse) {
+              //  fbresponse.authResponse = response.authResponse;
+                deferred.resolve(response);
+              //});
           } else {
               // the user is logged in to Facebook, 
               // but has not authenticated your app
             FB.login(function(response){
               if(response.authResponse){
-                  console.log("fb user logged in");
-                  console.log(response.authResponse);
-                  FB.api('/me?fields=id,name,email,birthday,friends', function(fbresponse) {
-                    fbresponse.authResponse = response.authResponse;
-                    resolve(null, fbresponse, deferred);
-                  });
+                  //console.log("fb user logged in");
+                  //console.log(response.authResponse);
+                  //FB.api('/me?fields=id,name,email,birthday,friends', function(fbresponse) {
+                  //  fbresponse.authResponse = response.authResponse;
+                    resolve(null, response, deferred);
+                  //});
               }else{
                   console.log("fb user could not log in");
                   resolve(response.error, null, deferred);
@@ -104,7 +104,7 @@
        return $http({
                   url: '/api/v1/auth/sociallogin/',
                   method: 'POST',
-                  headers: {'Authorization' : 'bearer '+backend+' '+accessToken},
+                  //headers: {'Authorization' : 'bearer '+backend+' '+accessToken},
                   data: {access_token: accessToken, backend: backend, data:data}
                 });
     }
@@ -112,18 +112,18 @@
     function go_login(callback){
       auth2 = gapi.auth2.getAuthInstance(); 
       auth2.signIn().then(function(signresp){
-        console.log(signresp);
-        console.log(JSON.parse(JSON.stringify(signresp.getBasicProfile())));
-        gapi.client.plus.people.list({
-          'userId': 'me',
-          'collection': 'visible'
-        }).then(function(peopleresp) {
-          gapi.client.plus.people.get({'userId': 'me'}).then(function(profileresp){
-            profileresp.access_token = auth2.currentUser.get().getAuthResponse().access_token;
-            profileresp.people = peopleresp.result;
-            callback(profileresp);
-          });
-        });
+        //console.log(signresp);
+        //console.log(JSON.parse(JSON.stringify(signresp.getBasicProfile())));
+        //gapi.client.plus.people.list({
+        //  'userId': 'me',
+        //  'collection': 'visible'
+        //}).then(function(peopleresp) {
+        //  gapi.client.plus.people.get({'userId': 'me'}).then(function(profileresp){
+        //    profileresp.access_token = auth2.currentUser.get().getAuthResponse().access_token;
+        //    profileresp.people = peopleresp.result;
+            callback(auth2.currentUser.get().getAuthResponse());
+        //  });
+        //});
       });
     }
 
