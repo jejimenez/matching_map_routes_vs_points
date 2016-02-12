@@ -59,6 +59,7 @@
     </div>
 </div>  
 -->
+<!--
     <div class="ui menu grid" role="navigation" ng-controller="NavbarController as vm">
         <nav class="mobile tablet only row">
             <div class="ui fixed inverted navbar menu">
@@ -124,3 +125,34 @@
             </div>
         </nav>
     </div>
+-->
+      <md-button aria-label="Open phone interactions menu" ng-click="vm.toggleRight()" class="md-icon-button">
+<md-icon md-font-library="material-icons">dehaze</md-icon>
+      </md-button>
+
+
+
+
+
+<!--
+      <a class="btn btn-primary btn-fab btn-raised mdi-content-add btn-add-new-post btn-above-all"
+  href="#"></a>
+-->
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
+
+      <md-toolbar class="md-theme-light">
+        <h1 class="md-toolbar-tools">Sidenav Right</h1>
+      </md-toolbar>
+      <md-content ng-controller="NavbarController as vm" layout-padding="">
+        <form>
+          <md-input-container>
+            <label for="testInput">Test input</label>
+            <input type="text" id="testInput" ng-model="data" md-autofocus="">
+          </md-input-container>
+        </form>
+        <md-button ng-click="close()" class="md-primary">
+          Close Sidenav Right
+        </md-button>
+      </md-content>
+
+    </md-sidenav>

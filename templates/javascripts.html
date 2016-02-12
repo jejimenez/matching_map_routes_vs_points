@@ -4,12 +4,14 @@
 {% compress js %}
 
 <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.js' %}"></script>
-<script type="text/javascript" src="{% static 'bower_components/semantic-ui/dist/semantic.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'bower_components/underscore/underscore.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'bower_components/angular/angular.js' %}"></script>
-<!--<script type="text/javascript" src="{% static 'bower_components/angular-route/angular-route.js' %}"></script>-->
+<script type="text/javascript" src="{% static 'bower_components/angular-material/angular-material.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-aria/angular-aria.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/angular-messages/angular-messages.min.js' %}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
 <script type="text/javascript" src="{% static 'bower_components/angular-cookies/angular-cookies.js' %}"></script>
 
@@ -29,6 +31,7 @@
 <script type="text/javascript" src="{% static 'modules/pooling.config.js' %}"></script>
 <script type="text/javascript" src="{% static 'modules/layout/layout.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'modules/layout/controllers/index.controller.js' %}"></script>
+<script type="text/javascript" src="{% static 'modules/layout/controllers/wrapper.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'modules/layout/controllers/navbar.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'modules/maps/maps.module.js' %}"></script>
 <script type="text/javascript" src="{% static 'modules/maps/services/maps.service.js' %}"></script>

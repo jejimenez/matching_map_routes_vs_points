@@ -11,7 +11,9 @@
       'pooling.authentication',
       'pooling.layout',
       'pooling.routes',
-      'pooling.config'
+      'pooling.config',
+      'ngMaterial', 
+      'ngMessages'
       ]);
 
 

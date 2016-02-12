@@ -63,28 +63,12 @@
   {% include 'stylesheets.html' %}
 </head>
 
-<body ng-app="pooling">
+<body ng-app="pooling" ng-controller="WrapperCtrl as vm">
 
-<div class='full_content_wrap'>  
+<div layout>
   {% include 'navbar.html' %}
-<!--
-    <p>Name: <input type="text" ng-model="name"></p>
-    <p>{{name}}</p>
-    <i class="large home icon" data-ng-click='setDirections()' ></i>
-    <button class="btn btn-info" data-ng-click='setDirections()'><i class="icon-search"></i>Get Directions</button>
-    <main class="ui page grid">
-        <div class="row">
-            <div class="column ">
-                <div class="ui message main">
-                    <h2>Hello, world!</h2>
-                    <g-map idmap="map_canvas"></g-map>
-                </div>
-            </div>
-        </div>
-    </main>
-
--->
-    <div class='content_wrap' ui-view></div>
+ 
+    <div layout ui-view></div>
   {% include 'javascripts.html' %}
 </div>
 
