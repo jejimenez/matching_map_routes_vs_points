@@ -78,15 +78,17 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social.apps.django_app.context_processors.backends', # from djanto 1.8
+                'social.apps.django_app.context_processors.login_redirect', # from djanto 1.8
             ],
         },
     },
 ]
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'social.apps.django_app.context_processors.backends',
-    'social.apps.django_app.context_processors.login_redirect',
-)
+# Deprecated in Django 1.8
+#TEMPLATE_CONTEXT_PROCESSORS = (
+#    'social.apps.django_app.context_processors.backends',
+#    'social.apps.django_app.context_processors.login_redirect',
+#)
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
@@ -214,3 +216,6 @@ LOGGING = {
         },
     }
 }
+
+#GEOS_LIBRARY_PATH = '/usr/lib/libgeos_c.so.1'
+GDAL_LIBRARY_PATH = '/home/jjimenez/miniconda3/envs/py34django19/lib/libgdal.so.20' # GDAL 2

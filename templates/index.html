@@ -65,11 +65,13 @@
 
 <body ng-app="pooling" ng-controller="WrapperCtrl as vm">
 
-<div layout>
+<div layout-row>
+<section>
   {% include 'navbar.html' %}
  
-    <div layout ui-view></div>
+    <div flex ui-view></div>
   {% include 'javascripts.html' %}
+</section>
 </div>
 
 </body>

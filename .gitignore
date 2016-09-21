@@ -1,3 +1,4 @@
 *.pyc
+*.log
 static/bower_components/
 pooling/migrations/

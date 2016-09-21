@@ -6,8 +6,9 @@ pip install django-compressor --django-compressor==1.4
 pip install djangorestframework
 pip install djangorestframework-gis
 pip install django-rest-framework-social-oauth2 -- update line 13 in /usr/local/lib/python3.4/dist-packages/social/utils.py set from urllib3.poolmanager import PoolManager
-
-
+pip install psycopg2
+pip install gdal -- conda install gdal
+pip install drf-nested-routers
 
 
 --Installing Geospatial libraries  : https://docs.djangoproject.com/en/1.8/ref/contrib/gis/install/geolibs/#geosbuild
