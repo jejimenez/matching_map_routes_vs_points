@@ -19,9 +19,15 @@ from rest_framework import exceptions, HTTP_HEADER_ENCODING
 from social.apps.django_app.views import NAMESPACE
 from django.core.urlresolvers import reverse
 
+import requests
+
+import logging
+
+
 import json
 
-# Create your views here.
+
+logger = logging.getLogger(__name__)
 
 class AccountViewSet(viewsets.ModelViewSet):
     # we will use the username attribute of the Account model to look up accounts instead of the id attribute. Overriding lookup_field handles this for us  : https://thinkster.io/django-angularjs-tutorial/
@@ -32,18 +38,16 @@ class AccountViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.request.method in permissions.SAFE_METHODS:
             return (permissions.AllowAny(),)
-
         if self.request.method == 'POST':
             return (permissions.AllowAny(),)
-
         return (permissions.IsAuthenticated(), IsAccountOwner(),)
-
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
+
         if serializer.is_valid():
             Account.objects.create_user(**serializer.validated_data)
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
         return Response({
             'status': 'Bad request',
             'message': 'Account could not be created with received data.'
@@ -52,7 +56,8 @@ class AccountViewSet(viewsets.ModelViewSet):
 
 class LoginView(views.APIView):
     def post(self, request, format=None):
-        data = json.loads((request.body).decode('utf-8')) #json.loads(request.body)
+        #data = json.loads((request.body).decode('utf-8')) #json.loads(request.body)
+        data = request.data
         email = data.get('email', None)
         password = data.get('password', None)
         account = authenticate(email=email, password=password)
@@ -60,7 +65,7 @@ class LoginView(views.APIView):
             if account.is_active:
                 login(request, account)
                 serialized = AccountSerializer(account)
-                return Response(serialized.data)
+                return Response(serialized.data, status = status.HTTP_202_ACCEPTED)
             else:
                 return Response({
                     'status': 'Unauthorized',
@@ -71,6 +76,7 @@ class LoginView(views.APIView):
                 'status': 'Unauthorized',
                 'message': 'Usuario/contraseña invalidas'
             }, status=status.HTTP_401_UNAUTHORIZED)
+
 
 class LogoutView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -88,23 +94,23 @@ def social_login(request):
     Returns two-tuple of (user, token) if authentication succeeds,
     or None otherwise.
     """
-    token = request.DATA.get('access_token', None)
-    backend = request.DATA.get('backend', None)
+    token = request.data.get('access_token', None)
+    backend = request.data.get('backend', None)
     strategy = load_strategy(request=request)
     try:
         backend = load_backend(strategy, backend, reverse(NAMESPACE + ":complete", args=(backend,)))
     except MissingBackend:
         msg = 'Invalid token header. Invalid backend.'
-        return Response(str(msg), status=400)
+        return Response(str(msg), status=401)
     try:
         user = backend.do_auth(access_token=token)
     except requests.HTTPError as e:
         msg = e.response.text
-        return Response(str(msg), status=400)
+        return Response(str(msg), status=402)
     if not user:
         msg = 'Bad credentials.'
-        return Response(str(msg), status=400)
+        return Response(str(msg), status=403)
 
     login(request, user)
     serialized = AccountSerializer(user)
-    return Response(serialized.data, status=status.HTTP_200_OK )
+    return Response(serialized.data, status=status.HTTP_202_ACCEPTED )

@@ -26,7 +26,7 @@ from rest_framework_nested import routers
 router = routers.SimpleRouter()
 router.register(r'seekers', SeekerViewSet)
 router.register(r'accounts', AccountViewSet)
-accounts_router = routers.NestedSimpleRouter(router, r'accounts', lookup='account')
+accounts_router = routers.NestedSimpleRouter(router, r'accounts')
 accounts_router.register(r'seekers', AccountSeekerViewSet)
 
 
@@ -36,6 +36,6 @@ urlpatterns = [
     url(r'^api/v1/pooling/', include(router.urls)),
     url(r'^api/v1/pooling/', include(accounts_router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url('^.*$', IndexView.as_view(), name='index'),
+    #url('^.*$', IndexView.as_view(), name='index'),
     #url(r'^job/$',login_required(JobView.as_view()),name='job'),
 ]
