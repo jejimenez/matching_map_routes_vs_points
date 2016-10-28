@@ -14,8 +14,9 @@ class SeekerSerializer(serializers.ModelSerializer):
 	class Meta:
 		#print("meta 1")
 		model = Seeker
-		fields = ('id', 'user', 'start_lat', 'start_lng', 'start_point', 'end_lat', 'end_lnt', 'end_point', 'schedule', 'description')
-		read_only_fields = ('id')
+		fields = '__all__'
+		#fields = ('id', 'user', 'start_lat', 'start_lng', 'start_point', 'end_lat', 'end_lnt', 'end_point', 'schedule', 'description')
+		#>read_only_fields = ('id')
 
 		def get_validation_exclusions(self, *args, **kwargs):
 			exclusions = super(SeekerSerializer, self).get_validation_exclusions()
@@ -44,3 +45,4 @@ class SeekerSerializer(serializers.ModelSerializer):
 
 			return instance'''
 
+#class DriverSerializer

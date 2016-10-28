@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import permissions, viewsets, status, views
 from rest_framework.response import Response
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
@@ -61,21 +61,29 @@ class LoginView(views.APIView):
         email = data.get('email', None)
         password = data.get('password', None)
         account = authenticate(email=email, password=password)
+        UserModel = get_user_model()
         if account is not None:
-            if account.is_active:
-                login(request, account)
-                serialized = AccountSerializer(account)
-                return Response(serialized.data, status = status.HTTP_202_ACCEPTED)
+            login(request, account)
+            serialized = AccountSerializer(account)
+            return Response(serialized.data, status = status.HTTP_202_ACCEPTED)
+        else:
+            try:
+                user = UserModel._default_manager.get_by_natural_key(email)
+            except UserModel.DoesNotExist:
+                return Response({
+                    'status': 'Unauthorized',
+                    'message': 'Usuario/contraseña invalidas'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            if not getattr(user, 'is_active', None):
+                return Response({
+                    'status': 'Unauthorized',
+                    'message': 'Esta cuenta ha sido deshabilitada'
+                }, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 return Response({
                     'status': 'Unauthorized',
-                    'message': 'Esta cuenta ha sido deshabilitada.'
+                    'message': 'Error desconocido al autenticar'
                 }, status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response({
-                'status': 'Unauthorized',
-                'message': 'Usuario/contraseña invalidas'
-            }, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(views.APIView):

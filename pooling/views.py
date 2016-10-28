@@ -7,7 +7,7 @@ from pooling.serializers import SeekerSerializer
 from pooling.models import Seeker
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
-from authentication.permissions import IsAccountOwner
+from authentication.permissions import IsAccountOwner, IsSeekerWriter
 import json
 
 # Create your views here.
@@ -16,9 +16,11 @@ class SeekerViewSet(viewsets.ModelViewSet):
     serializer_class = SeekerSerializer
 
     def get_permissions(self):
-        #if self.request.method in permissions.SAFE_METHODS:
-        #    return (permissions.AllowAny(),)
-        return (permissions.IsAuthenticated(),)
+        if self.request.method in permissions.SAFE_METHODS:
+            return (permissions.AllowAny(),)
+        if self.request.method == 'POST':
+            return (permissions.AllowAny(),)
+        return (permissions.IsAuthenticated(),IsSeekerWriter(),)
 
     def perform_create(self, serializer):
         instance = serializer.save(user=self.request.user)

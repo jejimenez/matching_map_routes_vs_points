@@ -26,8 +26,8 @@ from rest_framework_nested import routers
 router = routers.SimpleRouter()
 router.register(r'seekers', SeekerViewSet)
 router.register(r'accounts', AccountViewSet)
-accounts_router = routers.NestedSimpleRouter(router, r'accounts')
-accounts_router.register(r'seekers', AccountSeekerViewSet)
+accounts_router = routers.NestedSimpleRouter(router, r'accounts', lookup='account')
+accounts_router.register(r'seekers', AccountSeekerViewSet, base_name='accseeker')
 
 
 urlpatterns = [

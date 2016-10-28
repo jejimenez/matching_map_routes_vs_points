@@ -2,6 +2,7 @@
 from authentication.models import Account
 #from django.db import models
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
 
 # Create your models here.
 
@@ -19,8 +20,9 @@ class Seeker(models.Model):
 
 class Driver(models.Model):
     user = models.ForeignKey(Account, verbose_name='Usuario_Driver', related_name='Usuario_Driver')
-    json_way = models.TextField('json_way', blank=False)
-    schedule = models.CharField('schedule', max_length=7)
+    json_route = JSONField('json_route', blank=True, null=True)
+    schedule_days = models.CharField('schedule_days', max_length=7, blank=True,null=True)
+    schedule_hours = models.TextField('schedule_hours', blank=True,null=True)
     description = models.TextField('description', blank=True,null=True)
     rout_sumary = models.TextField('rout_sumary', blank=True,null=True)
     rout_duration = models.CharField('rout_duration', max_length=50,null=True)
@@ -65,7 +67,3 @@ class Step(models.Model):
     html_instruction = models.TextField('html_instruction', blank=True)
     distance = models.CharField('rout_duration', max_length=50,null=True)
     objects = models.GeoManager()
-
-
-    
-
