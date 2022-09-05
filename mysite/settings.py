@@ -167,10 +167,10 @@ OAUTH2_PROVIDER = {
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope'}
 }
 # Facebook configuration
-SOCIAL_AUTH_FACEBOOK_KEY = '1662044797371224'
-SOCIAL_AUTH_FACEBOOK_SECRET = '048319852bdba3482c18cfda51ae558c'
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '252960280952-f405uflnno97ivk5hlb863e94ulaojr0.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'DEg7vYjDQopyJCi7h7KA7NsC'
+SOCIAL_AUTH_FACEBOOK_KEY = ''
+SOCIAL_AUTH_FACEBOOK_SECRET = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
 # Define SOCIAL_AUTH_FACEBOOK_SCOPE to get extra permissions from facebook. Email is not sent by default, to get it, you must request the email permission:
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['id','name','email','birthday','friends','gender','picture','link']
